@@ -1,0 +1,91 @@
+<section id="reviews-section" class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h3 class="fw-bold mb-4 text-center">Reseñas de Clientes</h3>
+                
+                <div id="reviews-summary-card" class="card mb-4 d-none">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-4 text-center">
+                                <h4 id="average-rating" class="display-4 fw-bold">0.0</h4>
+                                <div id="summary-stars" class="rating-summary text-warning mb-2">
+                                    </div>
+                                <p class="text-muted mb-0">Basado en <span id="review-count">0</span> reseñas</p>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-2">
+                                    <button class="btn btn-sm btn-outline-dark active filter-btn" data-star-filter="all">Todas</button>
+                                    <button class="btn btn-sm btn-outline-dark filter-btn" data-star-filter="5">5 <i class="bi bi-star-fill"></i></button>
+                                    <button class="btn btn-sm btn-outline-dark filter-btn" data-star-filter="4">4 <i class="bi bi-star-fill"></i></button>
+                                    <button class="btn btn-sm btn-outline-dark filter-btn" data-star-filter="3">3 <i class="bi bi-star-fill"></i></button>
+                                    <button class="btn btn-sm btn-outline-dark filter-btn" data-star-filter="2">2 <i class="bi bi-star-fill"></i></button>
+                                    <button class="btn btn-sm btn-outline-dark filter-btn" data-star-filter="1">1 <i class="bi bi-star-fill"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-end mb-4">
+                    <button class="btn btn-primary" id="add-review-btn">
+                        <i class="bi bi-pencil-square me-2"></i>Escribir una reseña
+                    </button>
+                </div>
+
+                <div id="reviews-placeholder" class="text-center text-muted py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando reseñas...</span>
+                    </div>
+                    <p class="mt-2">Cargando reseñas...</p>
+                </div>
+
+                <div id="reviews-list">
+                    </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reviewModalLabel">Comparte tu opinión</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reviewForm" novalidate>
+                    <div class="mb-3">
+                        <label for="reviewRating" class="form-label">Calificación *</label>
+                        <select class="form-select" id="reviewRating" required>
+                            <option value="" selected disabled>Selecciona las estrellas...</option>
+                            <option value="5">★★★★★ (Excelente)</option>
+                            <option value="4">★★★★☆ (Bueno)</option>
+                            <option value="3">★★★☆☆ (Regular)</option>
+                            <option value="2">★★☆☆☆ (Malo)</option>
+                            <option value="1">★☆☆☆☆ (Pésimo)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reviewTitle" class="form-label">Título de tu reseña *</label>
+                        <input type="text" class="form-control" id="reviewTitle" required placeholder="Resume tu experiencia en una frase">
+                    </div>
+                    <div class="mb-3">
+                        <label for="reviewMessage" class="form-label">Tu reseña *</label>
+                        <textarea class="form-control" id="reviewMessage" rows="4" required placeholder="Cuéntanos los detalles de tu experiencia con el producto"></textarea>
+                    </div>
+                    <div id="review-feedback" class="mt-3"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary d-flex align-items-center" id="submit-review-btn">
+                    <span class="submit-text">Publicar Reseña</span>
+                    <span class="spinner-border spinner-border-sm ms-2" role="status" style="display: none;"></span>
+                    <span class="loading-text ms-2" style="display: none;">Publicando...</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

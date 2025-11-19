@@ -1,0 +1,86 @@
+<div class="modal fade" id="authModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Iniciar Sesión</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs mb-3" id="authTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#login-panel" id="login-tab-button">Iniciar Sesión</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#register-panel">Registrarse</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="login-panel">
+                        <form id="loginForm" novalidate>
+                            <div class="mb-3">
+                                <label for="loginEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="loginEmail" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="loginPassword" class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" id="loginPassword" name="password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+                            
+                            <div class="text-center mt-3">
+                                <a href="#" id="showResetPanelLink">¿Olvidaste tu contraseña?</a>
+                            </div>
+                            
+                            <div class="form-error mt-3"></div>
+                        </form>
+                    </div>
+
+                    <div class="tab-pane fade" id="register-panel">
+                        <form id="registerForm" novalidate>
+                            <div class="mb-3">
+                                <label for="registerName" class="form-label">Nombre Completo</label>
+                                <input type="text" class="form-control" id="registerName" name="fullName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registerEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="registerEmail" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registerPassword" class="form-label">Contraseña</Geminilabel>
+                                <input type="password" class="form-control" id="registerPassword" name="password" required minlength="6">
+                            </div>
+                            <div class="mb-3">
+                                <label for="registerConfirmPassword" class="form-label">Confirmar Contraseña</label>
+                                <input type="password" class="form-control" id="registerConfirmPassword" name="confirmPassword" required minlength="6">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+                            
+                            <div class="form-success mt-3"></div>
+                            <div class="form-error mt-3"></div>
+                        </form>
+                    </div>
+
+                    <div class="tab-pane fade" id="reset-panel">
+                        <p class="mb-3 text-muted">Ingresa tu correo electrónico y te enviaremos un enlace para reestablecer tu contraseña.</p>
+                        <form id="resetPasswordForm" novalidate>
+                            <div class="mb-3">
+                                <label for="resetEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="resetEmail" name="email" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Enviar enlace</button>
+                            
+                            <div class="form-success mt-3"></div>
+                            <div class="form-error mt-3"></div>
+                        </form>
+                        <div class="text-center mt-3">
+                            <a href="#" id="showLoginPanelLink">Volver a Iniciar Sesión</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es" class="smooth-scroll">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RiderSafe Básico - Seguridad Esencial para Motociclistas</title>
+    <meta name="description"
+        content="Descubre RiderSafe Básico: el dispositivo de seguridad con sensores de inclinación, dashboard local y cortacorriente para una protección esencial.">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../assets/css/global.css">
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        /* --- Product Image Gallery --- */
+
+        .main-image {
+            position: relative;
+            /* This creates a responsive square container (1:1 aspect ratio). 
+       You can change padding-top to 75% for a 4:3 ratio, or 56.25% for 16:9. */
+            padding-top: 75%;
+            background-color: #f8f9fa;
+            /* A light background for when images are loading */
+            border-radius: var(--radius, 0.75rem);
+            overflow: hidden;
+        }
+
+        .main-image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
+            /* This is the key property: it makes the image cover the container
+       without being distorted, cropping any excess. */
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="main-header"></header>
+
+    <main class="page-section">
+        <section class="py-1">
+            <div class="container">
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/index.html">Inicio</a></li>
+                        <li class="breadcrumb-item"><a href="/index.html#products">Productos</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">RiderSafe Básico</li>
+                    </ol>
+                </nav>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="product-gallery">
+                            <div class="main-image mb-3">
+                                <img id="mainImage" src="../assets/img/1.jpg" alt="RiderSafe Básico"
+                                    class="img-fluid rounded shadow-lg">
+                            </div>
+                            <div class="thumbnail-images d-flex gap-2">
+                                <img src="../assets/img/1.jpg" alt="Vista frontal"
+                                    class="img-thumbnail product-thumbnail" onclick="changeMainImage(this.src)">
+                                <img src="../assets/img/2.jpg" alt="Vista trasera"
+                                    class="img-thumbnail product-thumbnail" onclick="changeMainImage(this.src)">
+                                <img src="../assets/img/3.jpg" alt="Vista lateral"
+                                    class="img-thumbnail product-thumbnail" onclick="changeMainImage(this.src)">
+                                <img src="../assets/img/4.jpg" alt="Instalación" class="img-thumbnail product-thumbnail"
+                                    onclick="changeMainImage(this.src)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="product-info">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge product-badge-basic rounded-pill px-3 py-2 me-3">Básico</span>
+                                <div class="rating d-flex align-items-center">
+                                    <span id="product-hero-stars" class="text-warning"></span>
+                                    <span id="product-hero-review-count" class="ms-2 text-muted"></span>
+                                </div>
+                            </div>
+
+                            <h1 class="display-5 fw-bold mb-3">RiderSafe Básico</h1>
+                            <p class="fs-5 mb-4 text-muted">
+                                Dispositivo de seguridad esencial con sensores de inclinación y dashboard local.
+                                Protección confiable sin complicaciones.
+                            </p>
+
+                            <div class="price-section mb-4 p-3 rounded bg-light">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <span class="fs-3 fw-bold text-primary">$630 MXN</span>
+                                        <span class="text-muted text-decoration-line-through ms-2">$700</span>
+                                    </div>
+                                    <span class="badge bg-success fs-6">10% OFF</span>
+                                </div>
+                                <small class="text-muted">IVA incluido • Envío gratis a toda la República</small>
+                            </div>
+
+                            <div class="features mb-4">
+                                <h5 class="fw-bold mb-3">Características principales:</h5>
+                                <ul class="list-unstyled row g-2">
+                                    <li class="col-md-6"><i
+                                            class="bi bi-check-circle-fill text-success me-2"></i>Sensores de
+                                        inclinación</li>
+                                    <li class="col-md-6"><i
+                                            class="bi bi-check-circle-fill text-success me-2"></i>Dashboard local</li>
+                                    <li class="col-md-6"><i
+                                            class="bi bi-check-circle-fill text-success me-2"></i>Cortacorriente</li>
+                                    <li class="col-md-6"><i class="bi bi-check-circle-fill text-success me-2"></i>App
+                                        móvil incluida</li>
+                                </ul>
+                            </div>
+
+                            <!-- BOTONES MODIFICADOS -->
+                            <div class="d-grid gap-2 mb-4">
+                                <a href="../pages/en-progreso.html" class="btn btn-success btn-lg">
+                                    <i class="bi bi-person-lines-fill me-2"></i>Compra Directa con el Vendedor
+                                </a>
+                            
+                                    <form class="btn btn-outline-dark btn-lg" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                                        <input type="hidden" name="cmd" value="_s-xclick" />
+                                        <input type="hidden" name="hosted_button_id" value="XCWEJXVNNGT6G" />
+                                        <input type="hidden" name="currency_code" value="MXN" />
+                                        <input type="image"
+                                            src="https://www.paypalobjects.com/es_XC/MX/i/btn/btn_buynowCC_LG.gif"
+                                            border="0" name="submit"
+                                            title="PayPal es una forma segura y fácil de pagar en línea."
+                                            alt="Comprar ahora" />
+                                    </form>
+                                
+                                <button class="btn btn-outline-primary" onclick="openContactModal('RiderSafe Básico')">
+                                    <i class="bi bi-chat-dots me-2"></i>Hacer una Consulta
+                                </button>
+                            </div>
+
+                            <div class="row g-3 text-center text-md-start">
+                                <div class="col-md-4"><i class="bi bi-truck me-2 text-success"></i><small>Envío gratis
+                                        (3-5 días)</small></div>
+                                <div class="col-md-4"><i
+                                        class="bi bi-shield-check me-2 text-success"></i><small>Garantía de 2
+                                        años</small></div>
+                                <div class="col-md-4"><i
+                                        class="bi bi-arrow-return-left me-2 text-success"></i><small>Devoluciones (30
+                                        días)</small></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="py-5 bg-light">
+            <div class="container">
+                <ul class="nav nav-tabs nav-fill mb-4" id="productTabs" role="tablist">
+                    <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab"
+                            data-bs-target="#description">Descripción</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab"
+                            data-bs-target="#specifications">Especificaciones</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab"
+                            data-bs-target="#installation">Instalación</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab"
+                            data-bs-target="#warranty">Garantía</button></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="description" role="tabpanel">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <h3 class="fw-bold mb-4">Descripción del Producto</h3>
+                                <p class="mb-4">El RiderSafe Básico es la solución perfecta para motociclistas que
+                                    buscan protección esencial sin complicaciones. Diseñado con tecnología de sensores
+                                    avanzados, este dispositivo monitorea constantemente la inclinación de tu
+                                    motocicleta para detectar situaciones de riesgo.</p>
+                                <p class="mb-4">Con su dashboard local integrado, puedes acceder a información
+                                    importante sin necesidad de conexión a internet. El sistema de cortacorriente te
+                                    permite detener tu motocicleta de forma remota en caso de emergencia.</p>
+                                <h5 class="fw-bold mb-3">¿Qué incluye?</h5>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i
+                                            class="bi bi-check-circle-fill text-success me-2"></i>Dispositivo RiderSafe
+                                        Básico</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Kit de
+                                        instalación completo</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Manual de
+                                        usuario en español</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Aplicación
+                                        móvil gratuita</li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-4"><img src="../assets/img/5.jpg" alt="Componentes incluidos"
+                                    class="img-fluid rounded"></div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="specifications" role="tabpanel">
+    <h3 class="fw-bold mb-4">Especificaciones Técnicas</h3>
+    <div class="row">
+
+        <div class="col-md-6">
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <td class="fw-semibold">
+                            Controlador Principal<br>
+                            <img src="../assets/img/esp32.webp" alt="ESP32" style="width:60px;">
+                            <a href="https://documentation.espressif.com/esp32_datasheet_en.pdf">Ficha tecnica ESP32</a>
+                        </td>
+                        <td>ESP32 (Dual-Core 240MHz, WiFi 2.4GHz, Bluetooth)</td>
+                    </tr>
+
+                    <tr>
+                        <td class="fw-semibold">
+                            Sensor IMU<br>
+                            <img src="../assets/img/mpu.webp" alt="MPU6050" style="width:60px;">
+                            <a href="https://uelectronics.com/wp-content/uploads/2018/02/MPU-6000-Register-Map1.pdf">Ficha tecnica MPU6050</a>
+                        </td>
+                        <td>MPU6050 (Acelerómetro + Giroscopio)</td>
+                    </tr>
+
+                    <tr>
+                        <td class="fw-semibold">Entradas/Salidas</td>
+                        <td>GPIO digitales, I2C, UART, SPI</td>
+                    </tr>
+
+                    <tr>
+                        <td class="fw-semibold">
+                            Regulador de Voltaje<br>
+                            <img src="../assets/img/regulador.webp" alt="Regulador" style="width:60px;">
+                            <a href="https://www.ti.com/lit/ds/symlink/lm317.pdf?ts=1763524356578&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252Fes-mx%252FLM317">Ficha tecnica LM317</a>
+                        </td>
+                        <td>5V – 12V (regulador DC-DC)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-6">
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <td class="fw-semibold">
+                            Relevador<br>
+                            <img src="../assets/img/relevador.webp" alt="Relevador" style="width:60px;">
+                            <a href="https://media.master.com.mx/fichas/ESTUDIANTES_Y_TECNICOS/ARDUINOS/AR-1RELAY.pdf">Ficha tecnica Relevador</a>
+                        </td>
+                        <td>Relé eléctrico 5V / 10A</td>
+                    </tr>
+
+                    <tr>
+                        <td class="fw-semibold">Consumo</td>
+                        <td>120mA – 500mA típico</td>
+                    </tr>
+
+                    <tr>
+                        <td class="fw-semibold">Dimensiones</td>
+                        <td>85 x 55 x 20 mm (aprox.)</td>
+                    </tr>
+
+                    <tr>
+                        <td class="fw-semibold">Peso</td>
+                        <td>~120 g con componentes</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+                    <div class="tab-pane fade" id="installation" role="tabpanel">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <h3 class="fw-bold mb-4">Guía de Instalación</h3>
+                                <div class="installation-steps">
+                                    <div class="d-flex mb-4">
+                                        <div class="step-number me-3">1</div>
+                                        <div>
+                                            <h5 class="fw-bold">Preparación</h5>
+                                            <p>Apaga la motocicleta y reúne las herramientas del kit.</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex mb-4">
+                                        <div class="step-number me-3">2</div>
+                                        <div>
+                                            <h5 class="fw-bold">Ubicación</h5>
+                                            <p>Instala el dispositivo en el chasis, cerca del centro de gravedad.</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex mb-4">
+                                        <div class="step-number me-3">3</div>
+                                        <div>
+                                            <h5 class="fw-bold">Conexión</h5>
+                                            <p>Conecta los cables siguiendo el diagrama incluido.</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex mb-4">
+                                        <div class="step-number me-3">4</div>
+                                        <div>
+                                            <h5 class="fw-bold">Configuración</h5>
+                                            <p>Descarga la app y sincroniza el dispositivo.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info"><i class="bi bi-info-circle me-2"></i><strong>Instalación
+                                        profesional disponible</strong> por $500 MXN adicionales.</div>
+                            </div>
+                            <div class="col-lg-4"><img src="../assets/img/6.jpg" alt="Diagrama de instalación"
+                                    class="img-fluid rounded"></div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="warranty" role="tabpanel">
+                        <h3 class="fw-bold mb-4">Garantía y Políticas</h3>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h5 class="fw-bold mb-3">Garantía del Producto</h5>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>2 años de
+                                        garantía completa</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Cobertura
+                                        contra defectos de fabricación</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Soporte
+                                        técnico incluido</li>
+                                </ul>
+                                <h5 class="fw-bold mb-3 mt-4">Política de Devoluciones</h5>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="bi bi-arrow-return-left text-primary me-2"></i>30 días
+                                        para devoluciones</li>
+                                    <li class="mb-2"><i class="bi bi-arrow-return-left text-primary me-2"></i>Reembolso
+                                        completo garantizado</li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-6">
+                                <h5 class="fw-bold mb-3">Información Legal (México)</h5>
+                                <p class="small text-muted mb-3">Conforme a la Ley Federal de Protección al Consumidor
+                                    (PROFECO), este producto cuenta con garantía contra defectos de fabricación.</p>
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="fw-bold">Datos del Proveedor</h6>
+                                        <p class="small mb-1"><strong>RiderSafe México S.A. de C.V.</strong></p>
+                                        <p class="small mb-0">Tel: +52 55 1234-5678</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5">
+            <div class="container">
+                <div id="reviews-container" data-product-id="ridersafe-basic"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+    <div id="auth-container"></div>
+
+    <div class="modal fade" id="contactModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-primary">Solicitar Información</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div id="form-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="/assets/js/main.js"></script>
+</body>
+
+</html>

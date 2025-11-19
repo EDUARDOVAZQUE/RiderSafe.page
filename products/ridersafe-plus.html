@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es" class="smooth-scroll">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RiderSafe Plus - Seguridad Avanzada con GPS para Motociclistas</title>
+    <meta name="description" content="Descubre RiderSafe Plus: el dispositivo avanzado con GPS, geocercas, LilyGo TSIM 7600G-H y comunicación LoRa/MQTT para máxima protección.">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../assets/css/global.css">
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+ /* --- Product Image Gallery --- */
+
+.main-image {
+    position: relative;
+    /* This creates a responsive square container (1:1 aspect ratio). 
+       You can change padding-top to 75% for a 4:3 ratio, or 56.25% for 16:9. */
+    padding-top: 75%; 
+    background-color: #f8f9fa; /* A light background for when images are loading */
+    border-radius: var(--radius, 0.75rem);
+    overflow: hidden;
+}
+
+.main-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* This is the key property: it makes the image cover the container
+       without being distorted, cropping any excess. */
+    object-fit: cover;
+}
+</style>
+</head>
+<body>
+
+    <header id="main-header"></header>
+
+    <main class="page-section">
+        <section class="py-1">
+            <div class="container">
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/index.html">Inicio</a></li>
+                        <li class="breadcrumb-item"><a href="/index.html#products">Productos</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">RiderSafe Plus</li>
+                    </ol>
+                </nav>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="product-gallery">
+                            <div class="main-image mb-3">
+                                <img id="mainImage" src="../assets/img/1.jpg" alt="RiderSafe Plus" class="img-fluid rounded shadow-lg">
+                            </div>
+                            <div class="thumbnail-images d-flex gap-2">
+                               <img src="../assets/img/1.jpg" alt="Vista frontal" class="img-thumbnail product-thumbnail" onclick="changeMainImage(this.src)">
+                        <img src="../assets/img/2.jpg" alt="Vista trasera" class="img-thumbnail product-thumbnail" onclick="changeMainImage(this.src)">
+                        <img src="../assets/img/3.jpg" alt="Vista lateral" class="img-thumbnail product-thumbnail" onclick="changeMainImage(this.src)">
+                        <img src="../assets/img/4.jpg" alt="Instalación" class="img-thumbnail product-thumbnail" onclick="changeMainImage(this.src)">
+                    </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="product-info">
+                            <div class="d-flex align-items-center mb-3 flex-wrap">
+                                <span class="badge product-badge-plus rounded-pill px-3 py-2 me-2 mb-2">Avanzado</span>
+                                <span class="badge product-badge-bestseller rounded-pill px-3 py-2 me-3 mb-2">Más Vendido</span>
+                                <div class="rating d-flex align-items-center mb-2">
+                                    <span id="product-hero-stars" class="text-warning">
+                                        </span>
+                                    <span id="product-hero-review-count" class="ms-2 text-muted">
+                                        </span>
+                                </div>
+                            </div>
+
+                            <h1 class="display-5 fw-bold mb-3">RiderSafe Plus</h1>
+                            <p class="fs-5 mb-4 text-muted">
+                                La solución definitiva en seguridad. Con GPS, geocercas, comunicación LoRa de largo alcance y conectividad MQTT para máximo control.
+                            </p>
+
+                            <div class="price-section mb-4 p-3 rounded bg-light">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <span class="fs-3 fw-bold text-primary">$2000</span>
+                                        <span class="text-muted text-decoration-line-through ms-2">$2200</span>
+                                    </div>
+                                    <span class="badge bg-success fs-6">9% OFF</span>
+                                </div>
+                                <small class="text-muted">IVA incluido • Envío e Instalación incluidos</small>
+                            </div>
+
+                            <div class="features mb-4">
+                                <h5 class="fw-bold mb-3">Características avanzadas:</h5>
+                                <ul class="list-unstyled row g-2">
+                                    <li class="col-md-6"><i class="bi bi-check-circle-fill text-secondary me-2"></i>GPS de alta precisión</li>
+                                    <li class="col-md-6"><i class="bi bi-check-circle-fill text-secondary me-2"></i>Geocercas personalizables</li>
+                                    <li class="col-md-6"><i class="bi bi-check-circle-fill text-secondary me-2"></i>LilyGo TSIM 7600G-H</li>
+                                    <li class="col-md-6"><i class="bi bi-check-circle-fill text-secondary me-2"></i>Comunicación LoRa y 4G</li>
+                                </ul>
+                            </div>
+
+                             <!-- BOTONES MODIFICADOS -->
+                            <div class="d-grid gap-2 mb-4">
+                                <a href="../pages/en-progreso.html" class="btn btn-success btn-lg">
+                                    <i class="bi bi-person-lines-fill me-2"></i>Compra Directa con el Vendedor
+                                </a>
+                            
+                                    <form class="btn btn-outline-dark btn-lg" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                                        <input type="hidden" name="cmd" value="_s-xclick" />
+                                        <input type="hidden" name="hosted_button_id" value="XCWEJXVNNGT6G" />
+                                        <input type="hidden" name="currency_code" value="MXN" />
+                                        <input type="image"
+                                            src="https://www.paypalobjects.com/es_XC/MX/i/btn/btn_buynowCC_LG.gif"
+                                            border="0" name="submit"
+                                            title="PayPal es una forma segura y fácil de pagar en línea."
+                                            alt="Comprar ahora" />
+                                    </form>
+                                
+                                <button class="btn btn-outline-primary" onclick="openContactModal('RiderSafe Básico')">
+                                    <i class="bi bi-chat-dots me-2"></i>Hacer una Consulta
+                                </button>
+                            </div>
+
+                            <div class="row g-3 text-center text-md-start">
+                                <div class="col-md-4"><i class="bi bi-truck me-2 text-success"></i><small>Envío gratis (2-4 días)</small></div>
+                                <div class="col-md-4"><i class="bi bi-shield-check me-2 text-success"></i><small>Garantía de 3 años</small></div>
+                                <div class="col-md-4"><i class="bi bi-tools me-2 text-success"></i><small>Instalación incluida</small></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5 bg-light">
+            <div class="container">
+                <ul class="nav nav-tabs nav-fill mb-4" id="productTabs" role="tablist">
+                    <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#description">Descripción</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#specifications">Especificaciones</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#installation">Instalación</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#warranty">Garantía</button></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="description" role="tabpanel">
+                        <div class="row">
+                            <div class="col-lg-8">
+    <h3 class="fw-bold mb-4">Descripción del Producto</h3>
+
+    <p class="mb-4">
+        El <strong>RiderSafe LoRa</strong> es la versión avanzada del sistema, diseñada para motociclistas que requieren comunicación confiable incluso en zonas sin cobertura celular. Gracias a la tecnología <strong>Heltec LoRa V2</strong>, este dispositivo puede enviar y recibir información a largas distancias con un consumo de energía extremadamente bajo.
+    </p>
+
+    <p class="mb-4">
+        Equipado con sensores de movimiento de alta precisión, monitorea constantemente la inclinación y el comportamiento de tu motocicleta para detectar situaciones de riesgo. Además, permite la comunicación con un segundo módulo LoRa para funciones como alertas remotas, monitoreo continuo y control del sistema sin necesidad de internet.
+    </p>
+
+    <h5 class="fw-bold mb-3">¿Qué incluye?</h5>
+    <ul class="list-unstyled">
+        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Dispositivo RiderSafe LoRa</li>
+        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Dos módulos Heltec LoRa V2 emparejados</li>
+        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Kit de instalación completo</li>
+        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Manual de usuario en español</li>
+        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Aplicación móvil gratuita</li>
+    </ul>
+</div>
+
+                            <div class="col-lg-4"><img src="../assets/img/5.jpg" alt="Componentes incluidos" class="img-fluid rounded"></div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="specifications" role="tabpanel">
+                        <div class="col-md-6">
+    <table class="table table-striped">
+        <tbody>
+
+            <!-- Heltec LoRa V2 (2 unidades) -->
+            <tr>
+                <td class="fw-semibold">
+                    Heltec LoRa V2 (x2)<br>
+                    <img src="../assets/img/heltec.webp" alt="Heltec LoRa V2" style="width:60px;">
+                    <a href="https://resource.heltec.cn/download/HTIT-WB32LA/HTIT-WB32LA_V2.pdf">Ficha técnica Heltec LoRa V2</a>
+                </td>
+                <td>ESP32 LoRa V2 – Comunicación LoRa 915MHz, WiFi y Bluetooth</td>
+            </tr>
+
+            <!-- LilyGO T-SIM7600G-H -->
+            <tr>
+                <td class="fw-semibold">
+                    Módulo 4G LTE<br>
+                    <img src="../assets/img/tsim7600.webp" alt="LilyGO T-SIM7600G-H" style="width:60px;">
+                    <a href="https://github.com/Xinyuan-LilyGO/LilyGO-T-SIM7600X">Ficha técnica T-SIM7600G-H</a>
+                </td>
+                <td>LilyGO T-SIM7600G-H – Comunicación 4G LTE, GPS, SMS, TCP/IP</td>
+            </tr>
+
+            <!-- MPU6050 -->
+            <tr>
+                <td class="fw-semibold">
+                    Sensor IMU<br>
+                    <img src="../assets/img/mpu.webp" alt="MPU6050" style="width:60px;">
+                    <a href="https://uelectronics.com/wp-content/uploads/2018/02/MPU-6000-Register-Map1.pdf">Ficha técnica MPU6050</a>
+                </td>
+                <td>MPU6050 – Acelerómetro + Giroscopio (6 ejes)</td>
+            </tr>
+
+            <!-- Regulador -->
+            <tr>
+                <td class="fw-semibold">
+                    Regulador de Voltaje<br>
+                    <img src="../assets/img/regulador.webp" alt="Regulador" style="width:60px;">
+                    <a href="https://www.ti.com/lit/ds/symlink/lm317.pdf">Ficha técnica LM317</a>
+                </td>
+                <td>LM317 – Regulador ajustable 5V–12V</td>
+            </tr>
+
+            <!-- Relevador -->
+            <tr>
+                <td class="fw-semibold">
+                    Relevador<br>
+                    <img src="../assets/img/relevador.webp" alt="Relevador" style="width:60px;">
+                    <a href="#">Ficha técnica Relé 5V</a> <!-- pon el link real -->
+                </td>
+                <td>Relé 5V – Control de carga hasta 10A</td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+                    </div>
+                    <div class="tab-pane fade" id="installation" role="tabpanel">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <h3 class="fw-bold mb-4">Guía de Instalación</h3>
+                                <div class="installation-steps">
+                                    <div class="d-flex mb-4"><div class="step-number me-3">1</div><div><h5 class="fw-bold">Preparación</h5><p>Apaga la motocicleta y reúne las herramientas del kit.</p></div></div>
+                                    <div class="d-flex mb-4"><div class="step-number me-3">2</div><div><h5 class="fw-bold">Ubicación</h5><p>Instala el dispositivo en el chasis, cerca del centro de gravedad.</p></div></div>
+                                    <div class="d-flex mb-4"><div class="step-number me-3">3</div><div><h5 class="fw-bold">Conexión</h5><p>Conecta los cables siguiendo el diagrama incluido.</p></div></div>
+                                    <div class="d-flex mb-4"><div class="step-number me-3">4</div><div><h5 class="fw-bold">Configuración</h5><p>Descarga la app y sincroniza el dispositivo.</p></div></div>
+                                </div>
+                                <div class="alert alert-info"><i class="bi bi-info-circle me-2"></i><strong>Instalación profesional disponible</strong> por $500 MXN adicionales.</div>
+                            </div>
+                            <div class="col-lg-4"><img src="../assets/img/6.jpg" alt="Diagrama de instalación" class="img-fluid rounded"></div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="warranty" role="tabpanel">
+                        <h3 class="fw-bold mb-4">Garantía y Políticas</h3>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h5 class="fw-bold mb-3">Garantía del Producto</h5>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>2 años de garantía completa</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Cobertura contra defectos de fabricación</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Soporte técnico incluido</li>
+                                </ul>
+                                <h5 class="fw-bold mb-3 mt-4">Política de Devoluciones</h5>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="bi bi-arrow-return-left text-primary me-2"></i>30 días para devoluciones</li>
+                                    <li class="mb-2"><i class="bi bi-arrow-return-left text-primary me-2"></i>Reembolso completo garantizado</li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-6">
+                                <h5 class="fw-bold mb-3">Información Legal (México)</h5>
+                                <p class="small text-muted mb-3">Conforme a la Ley Federal de Protección al Consumidor (PROFECO), este producto cuenta con garantía contra defectos de fabricación.</p>
+                                <div class="card bg-light"><div class="card-body"><h6 class="fw-bold">Datos del Proveedor</h6><p class="small mb-1"><strong>RiderSafe México S.A. de C.V.</strong></p><p class="small mb-0">Tel: +52 55 1234-5678</p></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5">
+            <div class="container">
+                <div id="reviews-container" data-product-id="ridersafe-plus"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+    <div id="auth-container"></div>
+
+    <div class="modal fade" id="contactModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-primary">Solicitar Información</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div id="form-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="/assets/js/main.js"></script>
+</body>
+</html>

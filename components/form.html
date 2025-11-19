@@ -1,0 +1,45 @@
+<div class="contact-form">
+    <h3 class="mb-4">Envíanos un Mensaje</h3>
+    <form id="contactForm" novalidate>
+        <div class="mb-2">
+            <label for="name" class="form-label">Nombre Completo *</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+
+        <div class="mb-2">
+            <label for="email" class="form-label">Correo Electrónico *</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+
+        <div class="mb-2">
+            <label for="phone" class="form-label">Teléfono (Opcional)</label>
+            <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9\s-]{10,}"
+                title="Ingresa un número de teléfono válido de al menos 10 dígitos.">
+        </div>
+
+        <div class="mb-2">
+            <label for="subject" class="form-label">Asunto *</label>
+            <select class="form-select" id="subject" name="subject" required>
+                <option value="" disabled selected>Selecciona un motivo...</option>
+                <option value="interes_basic">Me interesa RiderSafe Basic</option>
+                <option value="interes_plus">Me interesa RiderSafe Plus</option>
+                <option value="consulta_general">Consulta General</option>
+                <option value="soporte_tecnico">Soporte Técnico</option>
+            </select>
+        </div>
+
+        <div class="mb-2">
+            <label for="message" class="form-label">Mensaje *</label>
+            <textarea class="form-control" id="message" name="message" rows="2" required
+                placeholder="Escribe tu mensaje aquí..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 d-flex align-items-center justify-content-center mt-3">
+            <span class="submit-text"><i class="bi bi-send me-2"></i>Enviar Mensaje</span>
+            <span class="spinner-border spinner-border-sm me-2" role="status" style="display: none;"></span>
+            <span class="loading-text" style="display: none;">Enviando...</span>
+        </button>
+
+        <div id="form-feedback" class="mt-3"></div>
+    </form>
+</div>

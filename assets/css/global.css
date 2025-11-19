@@ -1,0 +1,443 @@
+/* =================================================================
+   GLOBAL STYLESHEET - RiderSafe
+   =================================================================
+   Define la paleta de colores, tipografía y estilos para
+   componentes reutilizables en todo el sitio (header, footer, botones, etc.).
+*/
+
+/* ===== 1. VARIABLES GLOBALES (PALETA DE COLORES Y MEDIDAS) ===== */
+:root {
+    /* Colores Principales */
+    --primary: #1a2335;
+    --primary-foreground: #ffffff;
+    --secondary: #1e40af;
+    --secondary-foreground: #ffffff;
+
+    /* Colores de Fondo y Superficies */
+    --background: #f8fafc; /* Ligeramente gris para que resalten las tarjetas */
+    --card: #ffffff;
+    --card-foreground: #1f2937;
+    
+    /* Colores de Texto */
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+
+    /* Colores de Estado */
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+
+    /* Bordes y Anillos */
+    --border: #e5e7eb;
+    --input-border: #d1d5db;
+
+    /* Medidas y Sombras */
+    --radius: 0.75rem;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== 2. ESTILOS BASE Y TIPOGRAFÍA ===== */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Open Sans", sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background-color: var(--background);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Work Sans", sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+/* ===== 3. COMPONENTES GLOBALES (HEADER Y FOOTER) ===== */
+
+/* --- Barra de Navegación --- */
+.navbar {
+    background: white;
+    padding: 0.5rem 0;
+}
+
+.navbar-brand {
+    font-family: "Work Sans", sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--primary) !important;
+}
+.nav-link {
+    font-weight: 600;
+    color: var(--text-primay) !important;
+    transition: color 0.3s ease;
+}
+
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--primary) !important;
+}
+
+/* --- Pie de Página --- */
+.footer {
+    background: var(--dark-color);
+    color: #e5e7eb;
+    padding: 4rem 0 2rem;
+}
+.footer h5 {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+.footer .footer-link {
+    color: #9ca3af;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.footer .footer-link:hover {
+    color: white;
+}
+.footer .social-links a {
+    transition: opacity 0.3s ease;
+}
+.footer .social-links a:hover {
+    opacity: 0.8;
+}
+
+/* ===== 4. COMPONENTES REUTILIZABLES ===== */
+
+/* --- Botones --- */
+.btn {
+    border-radius: 400px;
+    font-weight: 600;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+.btn-primary {
+    background: var(--primary);
+    color: var(--primary-foreground);
+}
+.btn-primary:hover {
+    background: var(--secondary);
+    color: var(--secondary-foreground);
+}
+.btn-outline-primary {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+.btn-outline-primary:hover {
+    background: var(--primary);
+    color: var(--secondary-foreground);
+}
+.btn-lg {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+}
+
+/* --- Tarjetas (Cards) --- */
+.feature-card, .product-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+.feature-card:hover, .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+.feature-card {
+    padding: 2.5rem;
+    text-align: center;
+}
+.product-card {
+    padding: 2rem;
+    border-left: 5px solid;
+}
+.product-card.basic { border-color: var(--primary); }
+.product-card.plus { border-color: var(--success); }
+
+/* --- Formulario de Contacto --- */
+.contact-form {
+    background: var(--card);
+    padding: 0.5rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+}
+.form-control {
+    border: 2px solid var(--input-border);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+}
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+}
+
+/* --- Componentes de Página de Producto --- */
+.product-thumbnail {
+    cursor: pointer;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.product-thumbnail:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-sm);
+}
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+.product-badge-basic { background-color: var(--primary); color: white; }
+.product-badge-plus { background-color: var(--secondary); color: white; }
+.product-badge-bestseller { background-color: var(--danger); color: white; }
+
+
+/* ===== 5. SECCIONES DE PÁGINA ESPECÍFICAS ===== */
+.page-section {
+    margin-top: 60px; /* Ajusta este valor a la altura de tu header */
+}
+
+.hero-section {
+    padding: 120px 0 80px;
+    background: linear-gradient(135deg, #f8fafc 0%, #eef2f5 100%);
+}
+.hero-title {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 700;
+}
+.hero-subtitle {
+    font-size: clamp(1.1rem, 2.5vw, 1.25rem);
+    color: var(--text-secondary);
+}
+
+/* ===== 6. UTILIDADES Y ANIMACIONES ===== */
+.fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* ===== ESTILOS PARA EL CARRUSEL DEL HERO ===== */
+
+.hero-carousel {
+    margin-top: 10px;
+    border-radius: 20px;
+    overflow: hidden; /* Importante para que las esquinas redondeadas se apliquen a las imágenes */
+    box-shadow: var(--shadow-lg);
+    position: relative; /* Necesario para posicionar la barra de progreso */
+}
+
+/* ✅ ESTILO PARA UNIFICAR EL TAMAÑO DE LAS IMÁGENES */
+.hero-carousel .carousel-item img {
+    height: 450px; /* Define una altura fija para todas las imágenes */
+    width: 100%;
+    object-fit: cover; /* Hace que la imagen cubra el espacio sin deformarse (como un fondo) */
+    object-position: center; /* Centra la imagen al recortar */
+}
+
+/* ✅ ESTILOS PARA LA BARRA DE PROGRESO */
+.carousel-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 8px; /* Altura de la barra */
+    background-color: rgba(255, 255, 255, 0.3); /* Fondo semitransparente */
+    z-index: 10;
+}
+
+.carousel-progress-bar {
+    height: 100%;
+    background-color: white; /* Color de la barra que avanza */
+    width: 0%; /* Inicia en 0 */
+}
+
+/* ✅ ANIMACIÓN DE LA BARRA DE PROGRESO */
+.carousel-progress-bar.animate {
+    /* La duración se establecerá con JavaScript para que coincida con el intervalo del carrusel */
+    animation-name: progressBarAnimation;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes progressBarAnimation {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}
+/* =================================================================
+   ESTILOS PARA EL CONTENEDOR DE IMAGEN DE PRODUCTO
+   ================================================================= */
+
+/* --- Contenedor Principal --- */
+.product-image-container {
+    width: 100%;
+    height: 300px; /* Puedes ajustar esta altura según tus necesidades */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--card, #ffffff); /* Color de fondo mientras carga la imagen */
+    border-radius: 15px; /* Esquinas redondeadas */
+    overflow: hidden;    /* Crucial: recorta la imagen a las esquinas redondeadas */
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+    transition: box-shadow 0.3s ease;
+}
+
+.product-image-container:hover {
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+}
+
+/* --- Imagen Interna --- */
+.product-image {
+    width: 100%;
+    height: 100%;
+    /* La propiedad clave: la imagen cubre el contenedor sin deformarse */
+    object-fit: cover;
+    object-position: center; /* Centra la imagen al recortar */
+    transition: transform 0.3s ease; /* Transición suave para el efecto de zoom */
+}
+
+/* --- Efecto Hover --- */
+.product-image-container:hover .product-image {
+    transform: scale(1.05); /* Crea un sutil efecto de zoom */
+}
+
+.leaflet-div-icon {
+    background-color: transparent !important; /* Hace el fondo transparente */
+    border: none !important; /* Elimina cualquier borde que pueda tener */
+    display: flex; /* Para centrar el emoji si es necesario */
+    align-items: center; /* Centrado vertical */
+    justify-content: center; /* Centrado horizontal */
+    font-size: 20px; /* Ajusta el tamaño del emoji si es necesario */
+}
+/* --- Estilos Modernos para el Modal de Autenticación --- */
+
+/* 1. Suavizar el contenedor principal del modal */
+#authModal .modal-content {
+    border-radius: 12px; /* Esquinas más redondeadas */
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Sombra más suave y profunda */
+}
+
+/* 2. Limpiar el cabezal */
+#authModal .modal-header {
+    border-bottom: none; /* Elimina la línea divisoria anticuada */
+    padding-bottom: 0;
+}
+
+#authModal .modal-title {
+    font-weight: 600; /* Título un poco más fuerte */
+}
+
+/* 3. La transformación MÁS IMPORTANTE: Pestañas (Tabs) */
+#authTabs.nav-tabs {
+    border-bottom: none; /* Elimina la línea base de las pestañas */
+    background-color: #f1f3f5; /* Fondo gris claro para el contenedor de pestañas */
+    border-radius: 8px; /* Redondear el contenedor */
+    padding: 4px; /* Espacio interno */
+    display: flex;
+}
+
+#authTabs .nav-item {
+    flex-grow: 1; /* Hace que cada pestaña ocupe el 50% */
+}
+
+#authTabs .nav-link {
+    border: none;
+    border-radius: 6px; /* Redondeo para la "píldora" */
+    color: #495057; /* Color de texto inactivo */
+    text-align: center;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* 4. Estilo de la pestaña ACTIVA */
+#authTabs .nav-link.active {
+    background-color: #ffffff; /* "Píldora" blanca */
+    color: #0d6efd; /* Color primario de Bootstrap (o tu color de marca) */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Sombra sutil para la píldora */
+    font-weight: 600;
+}
+
+/* 5. Eliminar bordes de hover y focus feos */
+#authTabs .nav-link:focus,
+#authTabs .nav-link:hover {
+    border-color: transparent;
+    color: #0d6efd;
+}
+
+/* 6. Modernizar los campos del formulario (Inputs) */
+#authModal .form-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #6c757d; /* Etiqueta más sutil */
+}
+
+#authModal .form-control {
+    background-color: #f8f9fa; /* Fondo súper claro para el input */
+    border: 1px solid #e9ecef; /* Borde muy sutil */
+    border-radius: 8px;
+    padding: 12px; /* Un poco más de espacio interno */
+    transition: all 0.2s ease;
+}
+
+#authModal .form-control:focus {
+    background-color: #ffffff; /* Fondo blanco al enfocar */
+    border-color: #0d6efd; /* Borde de color primario */
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15); /* Sombra de foco suave */
+}
+
+/* 7. Modernizar el botón principal */
+#authModal .btn-primary {
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+#authModal .btn-primary:hover {
+    transform: translateY(-2px); /* Efecto de "levantar" al pasar el mouse */
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2); /* "Glow" suave */
+}
+
+/* 8. Estilizar los enlaces secundarios */
+#authModal .text-center a {
+    font-size: 0.9rem;
+    text-decoration: none;
+    font-weight: 500;
+}
+#authModal .text-center a:hover {
+    text-decoration: underline;
+}

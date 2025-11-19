@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es" class="smooth-scroll">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RiderSafe - Seguridad Inteligente para Motociclistas</title>
+    <meta name="description"
+        content="RiderSafe ofrece dispositivos inteligentes de seguridad para motociclistas con tecnología IoT, GPS y prevención de robos en México.">
+    <meta name="keywords" content="seguridad motociclista, IoT, GPS, prevención robos, México">
+    <meta name="author" content="RiderSafe">
+    <link rel="canonical" href="https://ridersafe.mx">
+
+    <meta property="og:title" content="RiderSafe - Seguridad Inteligente para Motociclistas">
+    <meta property="og:description"
+        content="Dispositivos inteligentes de seguridad para motociclistas con tecnología IoT y GPS.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ridersafe.mx">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./assets/css/global.css">
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+
+<body>
+
+    <header id="main-header"></header>
+
+    <main>
+        <section class="hero-section py-10">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <h1 class="hero-title fade-in-up">
+                            Protege tu Motocicleta con <span style="color: var(--primary-color);">Tecnología
+                                Inteligente</span>
+                        </h1>
+                        <p class="hero-subtitle fade-in-up">
+                            Dispositivos avanzados de seguridad y monitoreo, con prevención de robos, análisis de datos
+                            y comunicación directa con autoridades.
+                        </p>
+                        <div class="fade-in-up">
+                            <a href="#products" class="btn btn-primary btn-lg me-3">
+                                <i class="bi bi-eye me-2"></i>Ver Productos
+                            </a>
+                            <a href="#contact" class="btn btn-outline-primary btn-lg">
+                                <i class="bi bi-telephone me-2"></i>Contactar
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel"
+                            data-bs-interval="5000">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="./assets/img/1.jpg" alt="Dispositivo GPS RiderSafe">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="./assets/img/4.jpg" alt="Aplicación móvil RiderSafe">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="./assets/img/2.jpg" alt="Sistema de seguridad RiderSafe">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="./assets/img/3.jpg" alt="Sistema de seguridad RiderSafe">
+                                </div>
+                            </div>
+
+                            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel"
+                                data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel"
+                                data-bs-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </button>
+
+                            <div class="carousel-progress">
+                                <div class="carousel-progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="products-section py-5" id="products">
+            <div class="container">
+                <h2 class="section-title">Nuestros Productos</h2>
+
+                <div class="row mb-5">
+                    <div class="col-12">
+                        <div class="product-card basic">
+                            <div class="row align-items-center">
+                                <div class="col-lg-4">
+                                    <div class="product-image-container">
+                                        <img src="./assets/img/1.jpg" alt="RiderSafe Basic" class="product-image">
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <h3 class="product-title">
+                                        <i class="bi bi-shield me-2" style="color: var(--primary-color);"></i>RiderSafe
+                                        Basic
+                                    </h3>
+                                    <p class="product-price">$630 MXN</p>
+                                    <p class="text-muted mb-3">
+                                        Dispositivo de seguridad con sensores de inclinación y aplicación local para
+                                        monitoreo esencial de tu motocicleta.
+                                    </p>
+
+                                    <div class="tech-specs" id="basic-specs-short">
+                                        <h6><i class="bi bi-gear me-2"></i>Especificaciones Clave:</h6>
+                                        <ul class="list-unstyled">
+                                            <li><i class="bi bi-check-circle text-success me-2"></i>Sensores de
+                                                inclinación</li>
+                                            <li><i class="bi bi-check-circle text-success me-2"></i>Aplicación móvil
+                                                local</li>
+                                            <li><i class="bi bi-check-circle text-success me-2"></i>Alertas básicas</li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="tech-specs detailed" id="basic-specs-detailed" style="display: none;">
+                                        <h6><i class="bi bi-gear me-2"></i>Especificaciones Detalladas:</h6>
+                                        <ul class="list-unstyled">
+                                            <li><i class="bi bi-check-circle text-success me-2"></i>Sensores de alta
+                                                precisión</li>
+                                            <li><i class="bi bi-check-circle text-success me-2"></i>Batería de larga
+                                                duración (6 meses)</li>
+                                            <li><i class="bi bi-check-circle text-success me-2"></i>Resistente al agua
+                                                IP67</li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <button class="btn btn-outline-primary" onclick="window.toggleSpecs('basic')">
+                                            <i class="bi bi-info-circle me-1"></i><span id="basic-toggle-text">Ver
+                                                Más</span>
+                                        </button>
+                                        <a href="./products/ridersafe-basic.html" class="btn btn-primary">
+                                            <i class="bi bi-cart me-1"></i>Obtener Producto
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="product-card plus">
+                            <div class="row align-items-center">
+                                <div class="col-lg-4">
+                                    <div class="product-image-container">
+                                        <img src="./assets/img/1.jpg" alt="RiderSafe Plus" class="product-image">
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <h3 class="product-title">
+                                        <i class="bi bi-shield-plus me-2"
+                                            style="color: var(--success-color);"></i>RiderSafe Plus
+                                    </h3>
+                                    <p class="product-price">$2000 MXN</p>
+                                    <p class="text-muted mb-3">
+                                        Sistema avanzado con GPS, geocercas, tecnología IoT, análisis de datos y
+                                        comunicación con autoridades.
+                                    </p>
+
+                                    <div class="tech-specs" id="plus-specs-short">
+                                        <h6><i class="bi bi-gear me-2"></i>Especificaciones Clave:</h6>
+                                        <ul class="list-unstyled">
+                                            <li><i class="bi bi-check-circle text-success me-2"></i>GPS y geocercas</li>
+                                            <li><i class="bi bi-check-circle text-success me-2"></i>Análisis de datos de
+                                                viaje</li>
+                                            <li><i class="bi bi-check-circle text-success me-2"></i>Comunicación con
+                                                autoridades</li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="tech-specs detailed" id="plus-specs-detailed" style="display: none;">
+                                        <h6><i class="bi bi-gear me-2"></i>Especificaciones Detalladas:</h6>
+                                        <ul class="list-unstyled">
+                                            <li><i class="bi bi-check-circle text-success me-2"></i>GPS con tecnología
+                                                LilyGo TSIM</li>
+                                            <li><i class="bi bi-check-circle text-success me-2"></i>Conectividad LoRa y
+                                                MQTT</li>
+                                            <li><i class="bi bi-check-circle text-success me-2"></i>Resistente al agua
+                                                IP68</li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <button class="btn btn-outline-primary" onclick="window.toggleSpecs('plus')">
+                                            <i class="bi bi-info-circle me-1"></i><span id="plus-toggle-text">Ver
+                                                Más</span>
+                                        </button>
+                                        <a href="./products/ridersafe-plus.html" class="btn btn-primary">
+                                            <i class="bi bi-cart me-1"></i>Obtener Producto
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section py-5">
+            <div class="container">
+                <h2 class="section-title">¿Por qué elegir RiderSafe?</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <i class="bi bi-shield-lock fs-1 text-primary mb-3"></i>
+                            <h4>Prevención de Robos</h4>
+                            <p>Sistema de detección de movimiento no autorizado y alertas inmediatas a tu móvil.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <i class="bi bi-graph-up fs-1 text-success mb-3"></i>
+                            <h4>Análisis de Datos</h4>
+                            <p>Monitoreo de tus rutas y patrones de uso para optimizar la seguridad y el rendimiento.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <i class="bi bi-telephone fs-1 text-warning mb-3"></i>
+                            <h4>Comunicación Directa</h4>
+                            <p>Conexión directa con autoridades para una respuesta rápida en caso de emergencia.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-section py-5" id="contact">
+            <div class="container">
+                <h2 class="section-title text-center mb-5">Contáctanos</h2>
+                <div class="row align-items-center">
+                    <!-- FORMULARIO -->
+                    <div class="col-lg-6 mb-5 mb-lg-0">
+                        <div id="form-container"></div>
+                    </div>
+
+                    <!-- MAPA -->
+                   <div class="col-lg-6 text-center">
+    <h3 class="mb-4">Visítanos</h3>
+
+    <div class="map-container ratio p-2 rounded shadow-sm" 
+         style="--bs-aspect-ratio: 71.43%; max-width: 700px; margin: 0 auto;">
+
+        <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d467.9834990378793!2d-99.21651743352409!3d20.222805855116093!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d3d7fbac30dc71%3A0x4948d1279cf8032e!2sIPUN%20Iglesia%20Pentecostal%20Unida%20Nacional%20A.%20R.%20Mixquiahuala!5e0!3m2!1sen!2smx!4v1760457083859!5m2!1sen!2smx"
+            style="border:0; border-radius:10px;" 
+            allowfullscreen=""
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+        
+    </div>
+</div>
+                    <!-- MAPA -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <div id="auth-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="./assets/js/main.js"></script>
+</body>
+
+</html>

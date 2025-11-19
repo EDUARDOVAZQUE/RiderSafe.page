@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RiderSafe - Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+     <header id="main-header"></header>
+
+<section class="py-5"></section>
+    <div id="alert-container" class="alert-container py-5"></div>
+
+    <section id="activation-section" style="display: none;">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-7 col-lg-6">
+                    <div class="card shadow-lg">
+                        <div class="card-body p-5 text-center">
+                            <h2 class="card-title mb-4">Activa tu RiderSafe</h2>
+                            <p class="text-muted mb-4">Ingresa tu código de activación para comenzar a monitorear tu
+                                vehículo.</p>
+                            <form id="activation-form">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control form-control-lg text-center"
+                                        id="activation-code" placeholder="XXXX-XXXX-XXXX" required>
+                                </div>
+                                <div id="activation-error" class="alert alert-danger" style="display: none;"></div>
+                                <div id="activation-success" class="alert alert-success" style="display: none;"></div>
+                                <button type="submit" class="btn btn-primary btn-lg w-100">Activar Código</button>
+                            </form>
+                            <div class="mt-4">
+                                <small class="text-muted">
+                                    ¿No tienes un código? <a href="/index.html#productos">Compra RiderSafe aquí</a>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main id="dashboard-section" style="display: none;">
+
+        <div class="d-flex flex-column" style="height: calc(100vh - 80px);">
+
+            <section class="container-fluid py-2 px-4 bg-light border-bottom shadow-sm">
+                <div class="row align-items-center">
+                    <div class="col-md-5 col-lg-4">
+                        <div class="input-group">
+                            <label class="input-group-text" for="vehicle-select">
+                                <i class="bi bi-truck-front-fill"></i>
+                            </label>
+                            <select class="form-select" id="vehicle-select">
+                                <option selected>Moto 01 (GHI-789)</option>
+                                <option value="1">Camión 02 (ABC-123)</option>
+                                <option value="2">Van 03 (DEF-456)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-7 col-lg-8 d-flex justify-content-md-end align-items-center mt-2 mt-md-0">
+    <div class="follow-toggle">
+                                        <input type="checkbox" id="follow-checkbox" checked>
+                                        <label for="follow-checkbox" class="ms-1">Seguir Vehículo</label>
+                                    </div>
+    <button id="run-demo-btn" class="btn btn-sm btn-warning me-3">
+        <i class="bi bi-play-circle"></i> Iniciar Demo
+    </button>
+    <ul class="nav nav-pills nav-fill" id="view-toggle" role="tablist">
+        <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="show-live-tab" data-bs-toggle="pill"
+                                    data-bs-target="#live-monitoring-content" type="button" role="tab"
+                                    aria-controls="live-monitoring-content" aria-selected="true">
+                                    <i class="bi bi-broadcast-pin"></i> Monitoreo en Vivo
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="show-history-tab" data-bs-toggle="pill"
+                                    data-bs-target="#history-content" type="button" role="tab"
+                                    aria-controls="history-content" aria-selected="false">
+                                    <i class="bi bi-signpost-split"></i> Rutas Históricas
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <div class="tab-content flex-grow-1">
+
+                <div class="tab-pane fade show active h-100" id="live-monitoring-content" role="tabpanel"
+                    aria-labelledby="show-live-tab">
+
+                    <div class="d-flex flex-column flex-lg-row h-100">
+
+                        <div class="map-panel h-100 h-lg-100">
+                            <div class="map-container w-100 h-100">
+                                <div class="map-header"
+                                    style="position: absolute; top: 10px; left: 10px; z-index: 1000; background: white; padding: 5px 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                    
+                                </div>
+                                <div id="map" class="w-100 h-100"></div>
+                            </div>
+                        </div>
+
+                        <aside
+                            class="info-panel bg-light border-start overflow-y-auto h-100 flex-grow-1 h-lg-100 info-panel-lg-fixed">
+
+                            <ul class="nav nav-tabs nav-fill" id="infoTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="sensors-tab" data-bs-toggle="tab"
+                                        data-bs-target="#sensors-content" type="button" role="tab"
+                                        aria-controls="sensors-content" aria-selected="true">
+                                        <i class="bi bi-speedometer2"></i> Sensores
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="geofence-tab" data-bs-toggle="tab"
+                                        data-bs-target="#geofence-content" type="button" role="tab"
+                                        aria-controls="geofence-content" aria-selected="false">
+                                        <i class="bi bi-bounding-box-circles"></i> Geocercas
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content p-3" id="infoTabContent">
+                                <div class="tab-pane fade show active" id="sensors-content" role="tabpanel"
+                                    aria-labelledby="sensors-tab">
+                                    <div class="mb-3" id="vehicle-name-container">
+
+                                        <div id="vehicle-name-view"
+                                            class="d-flex align-items-center justify-content-between">
+                                            <h5 class="mb-0" id="vehicle-name-display">Cargando...</h5>
+                                            <button id="edit-name-btn" class="btn btn-sm btn-outline-secondary ms-2"
+                                                title="Editar nombre">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        </div>
+
+                                        <div id="vehicle-name-edit" class="input-group" style="display: none;">
+                                            <input type="text" id="vehicle-name-input" class="form-control"
+                                                placeholder="Escribe un nombre...">
+                                            <button id="save-name-btn" class="btn btn-success" title="Guardar">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                            <button id="cancel-name-btn" class="btn btn-danger" title="Cancelar">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="status-grid">
+                                        <div class="status-card">
+                                            <div class="status-title">Batería Dispositivo</div>
+                                            <div class="battery-indicator">
+                                                <div class="battery-level" id="batteryLevel"></div>
+                                            </div>
+                                            <div class="status-value" id="batteryPercent">0%</div>
+                                        </div>
+                                        <div class="status-card">
+                                            <div class="status-title">Conexión</div>
+                                            <div class="connection-dot disconnected" id="deviceConnection"></div>
+                                            <div class="status-value" id="deviceStatusText">Desconectado</div>
+                                        </div>
+                                        <div class="status-card">
+                                            <div class="status-title">Velocidad</div>
+                                            <div class="speed-display" id="speedDisplay">0</div>
+                                            <div class="status-value">km/h</div>
+                                        </div>
+                                        <div class="status-card">
+                                            <div class="status-title">Bloqueo Motor</div>
+                                            <div class="status-value" id="lockStatus">
+                                                <i class="bi bi-unlock-fill text-success" style="font-size: 2rem;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="model-container mt-3">
+                                        <h6 class="text-center">Inclinación</h6>
+                                        <div id="3Dmodel" style="height: 0px;"></div>
+                                        <div class="tilt-controls">
+                                            <input type="range" class="form-range" id="tiltSlider" min="-90" max="90"
+                                                value="0" disabled>
+                                            <p id="sliderValue" class="text-center mb-0">0°</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="geofence-content" role="tabpanel"
+                                    aria-labelledby="geofence-tab">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0">Geocercas</h5>
+                                        <button class="btn btn-sm btn-primary" id="openModalBtn">
+                                            <i class="bi bi-pencil-square"></i> Editar / Crear
+                                        </button>
+                                    </div>
+                                    <small class="text-muted d-block mb-2">Mostrando geocercas para: Auto 03
+                                        (1/4)</small>
+                                    <div class="geofence-list-new">
+                                        <div class="card mb-2" id="geofence-item-0">
+                                            <div class="card-body p-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-0 geofence-name">📍 Casa</h6>
+                                                        <small class="text-muted">Circular - 500m</small>
+                                                    </div>
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" role="switch"
+                                                            id="geofence-toggle-0" checked>
+                                                    </div>
+                                                    <div id="geofence-status-0" class="geofence-status outside">Fuera
+                                                    </div>
+                                                    <button class="btn btn-sm btn-outline-secondary"
+                                                        onclick="window.centerGeofence(0)">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card mb-2" id="geofence-item-1">
+                                            <div class="card-body p-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-0 geofence-name">🏢 Trabajo</h6>
+                                                        <small class="text-muted">Poligonal - 6 puntos</small>
+                                                    </div>
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" role="switch"
+                                                            id="geofence-toggle-1" checked>
+                                                    </div>
+                                                    <div id="geofence-status-1" class="geofence-status inside">Dentro
+                                                    </div>
+                                                    <button class="btn btn-sm btn-outline-secondary"
+                                                        onclick="window.centerGeofence(1)">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade h-100 overflow-y-auto" id="history-content" role="tabpanel"
+                    aria-labelledby="show-history-tab">
+                    <div class="container py-4">
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label for="history-date" class="form-label">Fecha</label>
+                                <input type="date" class="form-control" id="history-date" value="2025-11-01">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Resumen de Ruta: Camión 01</h5>
+                                        <div class="d-flex justify-content-between text-muted mb-3">
+                                            <small>Distancia: 1.6 km</small>
+                                            <small>Vel. Máx: 30 km/h</small>
+                                            <small>Paradas: 7 puntos</small>
+                                        </div>
+                                        <div class="bg-light border rounded"
+                                            style="width: 100%; height: 300px; display: grid; place-items: center;">
+                                            <p class="text-muted">Espacio para Gráfica de Ruta</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Resumen de Ruta: Van 02</h5>
+                                        <div class="d-flex justify-content-between text-muted mb-3">
+                                            <small>Distancia: 1.6 km</small>
+                                            <small>Vel. Máx: 25 km/h</small>
+                                            <small>Paradas: 6 puntos</small>
+                                        </div>
+                                        <div class="bg-light border rounded"
+                                            style="width: 100%; height: 300px; display: grid; place-items: center;">
+                                            <p class="text-muted">Espacio para Gráfica de Ruta</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+   <div class="modal fade" id="geofenceModal" tabindex="-1" aria-labelledby="geofenceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered"> <div class="modal-content">
+            
+            <div class="modal-header">
+                <h5 class="modal-title" id="geofenceModalLabel">Editar Geocercas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="col-md-7">
+                        <p class="small text-muted mb-2">Arrastra el marcador para mover la geocerca.</p>
+                        <div id="modal-map" style="height: 400px; width: 100%; border-radius: 8px;"></div>
+                    </div>
+
+                    <div class="col-md-5">
+                        
+                        <div class="mb-3">
+                            <label for="geofence-select" class="form-label">Geocerca Activa</label>
+                            <select id="geofence-select" class="form-select"></select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="geofence-name-input" class="form-label">Nombre</label>
+                            <input type="text" id="geofence-name-input" class="form-control" placeholder="Ej: Casa">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label for="geofence-lat-input" class="form-label">Latitud</label>
+                                <input type="number" id="geofence-lat-input" class="form-control" placeholder="20.141" step="0.000001">
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label for="geofence-lng-input" class="form-label">Longitud</label>
+                                <input type="number" id="geofence-lng-input" class="form-control" placeholder="-99.205" step="0.000001">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="geofence-radius-input" class="form-label">Radio (metros)</label>
+                            <input type="number" id="geofence-radius-input" class="form-control" min="50" value="100">
+                        </div>
+
+                        <div id="geofence-modal-error" class="alert alert-danger" style="display: none;"></div>
+                        <div id="geofence-modal-success" class="alert alert-success" style="display: none;"></div>
+
+                    </div> </div> </div> <div class="modal-footer">
+                <button id="new-geofence-btn" class="btn btn-sm btn-outline-primary me-auto">
+                    <i class="bi bi-plus-circle"></i> Crear Nueva
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button id="save-geofence-btn" class="btn btn-sm btn-primary px-4">
+                    <i class="bi bi-check-circle"></i> Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/fflate@0.7.4/umd/index.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
+
+</body>
+
+</html>
