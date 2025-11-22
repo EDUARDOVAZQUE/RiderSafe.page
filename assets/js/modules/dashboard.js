@@ -1,7 +1,7 @@
 // dashboard.js - Módulo del sistema de monitoreo de vehículos RiderSafe
 
 import { db } from "../config/firebase-config.js";
-import { doc, onSnapshot, getDoc, collection, updateDoc, GeoPoint, setDoc,getDocs, query, orderBy, limit  } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { doc, onSnapshot, getDoc, collection, updateDoc, GeoPoint, setDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 import { getCurrentUser, getUserData, activateProductCode } from "./auth.js";
 // (El resto de tus imports)
 let map, motorcycleMarker, model, scene, camera, renderer;
@@ -252,7 +252,7 @@ function setupEventListeners() {
     const editBtn = document.getElementById('edit-name-btn');
     const saveBtn = document.getElementById('save-name-btn');
     const cancelBtn = document.getElementById('cancel-name-btn');
-    
+
     if (editBtn) {
         editBtn.onclick = () => toggleVehicleNameEdit(true);
     }
@@ -264,27 +264,27 @@ function setupEventListeners() {
     }
 }
 // --- Listener para el botón de Demo ---
-   // --- Listener para el botón de Demo ---
-    const demoBtn = document.getElementById('run-demo-btn');
-    if (demoBtn) {
-        demoBtn.onclick = () => {
-            
-            // 1. DESBLOQUEO FORZOSO DE AUDIO
-            // Esto DEBE ocurrir aquí, directo en el clic, antes de cualquier confirm() o async
-            notificationSound.play()
-                .then(() => {
-                    notificationSound.pause();
-                    notificationSound.currentTime = 0;
-                    console.log("🔊 Audio desbloqueado correctamente.");
-                })
-                .catch(e => console.warn("⚠️ No se pudo desbloquear audio:", e));
+// --- Listener para el botón de Demo ---
+const demoBtn = document.getElementById('run-demo-btn');
+if (demoBtn) {
+    demoBtn.onclick = () => {
 
-            // 2. Pedir confirmación
-            if (confirm("¿Iniciar simulación de ruta? Esto sobrescribirá el historial de 'Hoy' para este vehículo.")) {
-                runDemoRoute();
-            }
-        };
-    }
+        // 1. DESBLOQUEO FORZOSO DE AUDIO
+        // Esto DEBE ocurrir aquí, directo en el clic, antes de cualquier confirm() o async
+        notificationSound.play()
+            .then(() => {
+                notificationSound.pause();
+                notificationSound.currentTime = 0;
+                console.log("🔊 Audio desbloqueado correctamente.");
+            })
+            .catch(e => console.warn("⚠️ No se pudo desbloquear audio:", e));
+
+        // 2. Pedir confirmación
+        if (confirm("¿Iniciar simulación de ruta? Esto sobrescribirá el historial de 'Hoy' para este vehículo.")) {
+            runDemoRoute();
+        }
+    };
+}
 function updateUIWithDefaults() {
     updateBattery(0);
     updateSpeed(0);
@@ -427,7 +427,7 @@ function init3D() {
     scene.add(dirLight);
 
     const loader = new THREE.FBXLoader();
-    loader.load("/dashboard/motorexp.fbx", (object) => {
+    loader.load("./motorexp.fbx", (object) => {
         model = object;
         model.scale.set(0.6, 0.6, 0.6);
         model.position.set(2, -2.5, 0);
@@ -494,9 +494,9 @@ function checkGeofences(lat, lon, geofences) {
         if (!lat || !lon || !fence.active) {
             fence.isInside = false;
             updateGeofenceUI(index, false);
-            return; 
+            return;
         }
-        
+
         const distance = getDistance(lat, lon, fence.lat, fence.lon);
         const wasInside = oldGeofences[index] ? oldGeofences[index].isInside : false;
         const isNowInside = distance <= fence.radius;
@@ -508,9 +508,9 @@ function checkGeofences(lat, lon, geofences) {
             fence.isInside = false;
             showAlert(`Saliendo de ${fence.name}`, "exit");
         } else {
-            fence.isInside = wasInside; 
+            fence.isInside = wasInside;
         }
-        
+
         updateGeofenceUI(index, fence.isInside);
     });
 }
@@ -648,7 +648,7 @@ function initModalMap() {
         modalMap.invalidateSize();
         return;
     }
-    
+
     // Si no existe, créalo
     const defaultCenter = [19.4326, -99.1332]; // CDMX
     modalMap = L.map("modal-map").setView(defaultCenter, 14);
@@ -786,13 +786,13 @@ function showAlert(message, type) {
     notificationSound.play().catch(error => {
         // Ignoramos el error silenciosamente si aún no se ha interactuado
         // Pero como usamos Base64, es menos probable que falle por red.
-        console.log("Audio esperando interacción del usuario."); 
+        console.log("Audio esperando interacción del usuario.");
     });
 
     // 2. Crear la Alerta Visual
     const alertDiv = document.createElement("div");
     alertDiv.className = `alert-toast ${type}`;
-    
+
     let iconHtml = '';
     if (type === 'error') iconHtml = '<i class="bi bi-exclamation-circle-fill me-2 fs-5"></i>';
     else if (type === 'success') iconHtml = '<i class="bi bi-check-circle-fill me-2 fs-5"></i>';
@@ -800,7 +800,7 @@ function showAlert(message, type) {
     else if (type === 'exit') iconHtml = '<i class="bi bi-box-arrow-right me-2 fs-5"></i>';
 
     alertDiv.innerHTML = `${iconHtml}<div>${message}</div>`;
-    
+
     container.appendChild(alertDiv);
 
     setTimeout(() => alertDiv.classList.add("show"), 10);
@@ -1065,7 +1065,7 @@ async function handleSaveGeofence() {
 function updateModalMarkerFromInputs() {
     const lat = Number(document.getElementById("geofence-lat-input").value);
     const lng = Number(document.getElementById("geofence-lng-input").value);
-    
+
     // Verificar que sean números válidos
     if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
         const newLatLng = [lat, lng];
@@ -1167,7 +1167,7 @@ function sleep(ms) {
  */
 async function runDemoRoute() {
     const demoBtn = document.getElementById('run-demo-btn');
-    
+
     // 1. Validar
     if (!currentVehicleId) {
         showAlert("Por favor, selecciona un vehículo primero.", "error");
@@ -1180,20 +1180,20 @@ async function runDemoRoute() {
     // 2. Ruta GeoJSON (Tu ruta proporcionada)
     // Formato GeoJSON original: [Longitud, Latitud]
     const geoJsonPath = [
-        [-99.22082,20.20428],[-99.22073,20.20485],[-99.2206,20.20528],[-99.22051,20.20567],
-        [-99.22051,20.20567],[-99.2204,20.20572],[-99.22023,20.20579],[-99.22018,20.20581],
-        [-99.22011,20.20581],[-99.22002,20.2058],[-99.22002,20.2058],[-99.21988,20.20577],
-        [-99.21969,20.20653],[-99.2194,20.20795],[-99.21914,20.20942],[-99.21914,20.20942],
-        [-99.21792,20.21632],[-99.21767,20.21779],[-99.21755,20.2184],[-99.21716,20.22032],
-        [-99.2171,20.2206],[-99.21703,20.22096],[-99.21698,20.2212],[-99.21695,20.22134],
-        [-99.21687,20.22232],[-99.21675,20.22303],[-99.21673,20.22316],[-99.21661,20.22382],
-        [-99.21624,20.22562],[-99.21602,20.22683],[-99.21582,20.22775],[-99.21558,20.22877],
-        [-99.21558,20.22877],[-99.21492,20.22893],[-99.21469,20.22902],[-99.21469,20.22902],
-        [-99.21466,20.22927],[-99.21407,20.22919],[-99.21407,20.22919],[-99.21403,20.22946],
-        [-99.21403,20.22946],[-99.21348,20.22941],[-99.21342,20.22941],[-99.21242,20.22929],
-        [-99.21131,20.22914],[-99.21033,20.22903],[-99.21033,20.22903],[-99.21012,20.2302],
-        [-99.21009,20.23038],[-99.20998,20.23099],[-99.20991,20.23142],[-99.20979,20.23212],
-        [-99.2097,20.23264],[-99.20962,20.23308],[-99.20957,20.23337],[-99.20957,20.23337]
+        [-99.22082, 20.20428], [-99.22073, 20.20485], [-99.2206, 20.20528], [-99.22051, 20.20567],
+        [-99.22051, 20.20567], [-99.2204, 20.20572], [-99.22023, 20.20579], [-99.22018, 20.20581],
+        [-99.22011, 20.20581], [-99.22002, 20.2058], [-99.22002, 20.2058], [-99.21988, 20.20577],
+        [-99.21969, 20.20653], [-99.2194, 20.20795], [-99.21914, 20.20942], [-99.21914, 20.20942],
+        [-99.21792, 20.21632], [-99.21767, 20.21779], [-99.21755, 20.2184], [-99.21716, 20.22032],
+        [-99.2171, 20.2206], [-99.21703, 20.22096], [-99.21698, 20.2212], [-99.21695, 20.22134],
+        [-99.21687, 20.22232], [-99.21675, 20.22303], [-99.21673, 20.22316], [-99.21661, 20.22382],
+        [-99.21624, 20.22562], [-99.21602, 20.22683], [-99.21582, 20.22775], [-99.21558, 20.22877],
+        [-99.21558, 20.22877], [-99.21492, 20.22893], [-99.21469, 20.22902], [-99.21469, 20.22902],
+        [-99.21466, 20.22927], [-99.21407, 20.22919], [-99.21407, 20.22919], [-99.21403, 20.22946],
+        [-99.21403, 20.22946], [-99.21348, 20.22941], [-99.21342, 20.22941], [-99.21242, 20.22929],
+        [-99.21131, 20.22914], [-99.21033, 20.22903], [-99.21033, 20.22903], [-99.21012, 20.2302],
+        [-99.21009, 20.23038], [-99.20998, 20.23099], [-99.20991, 20.23142], [-99.20979, 20.23212],
+        [-99.2097, 20.23264], [-99.20962, 20.23308], [-99.20957, 20.23337], [-99.20957, 20.23337]
     ];
 
     let historyRoutePoints = [];
@@ -1204,35 +1204,35 @@ async function runDemoRoute() {
         // Recorrer cada punto de la ruta
         for (let i = 0; i < geoJsonPath.length; i++) {
             const point = geoJsonPath[i];
-            
+
             // IMPORTANTE: GeoJSON es [Lon, Lat], pero Firebase/Leaflet usan [Lat, Lon]
-            const lat = point[1]; 
+            const lat = point[1];
             const lon = point[0];
 
             // --- Generar datos simulados ---
             // Velocidad variable (más rápido en rectas)
-            const speed = Math.floor(Math.random() * 40) + 20; 
+            const speed = Math.floor(Math.random() * 40) + 20;
             // Batería bajando
-            const battery = Math.max(10, 100 - Math.floor((i / geoJsonPath.length) * 15)); 
-            
+            const battery = Math.max(10, 100 - Math.floor((i / geoJsonPath.length) * 15));
+
             // Timestamp simulado (para que se vea bien en la gráfica)
             const now = new Date();
             // Restamos tiempo para que la ruta parezca haber ocurrido en la última hora
-            now.setMinutes(now.getMinutes() - (geoJsonPath.length - i)); 
+            now.setMinutes(now.getMinutes() - (geoJsonPath.length - i));
             const timestamp = now.toISOString();
 
             // --- EVENTOS ALEATORIOS ---
-            
+
             // 1. Simular Inclinación (Caída)
             // Probabilidad del 5% en cada paso de tener una caída
             let tilt = Math.floor(Math.random() * 6) - 3; // Normal: -3 a 3
-            let isFall = Math.random() < 0.05; 
-            
+            let isFall = Math.random() < 0.05;
+
             if (isFall) {
                 tilt = Math.floor(Math.random() * 20) + 50; // Entre 50 y 70 grados
                 console.log("🔥 ¡Evento aleatorio: CAÍDA!");
                 showAlert(`¡Alerta! Caída detectada (${tilt}°)`, "error");
-                
+
                 // Guardar evento en Firebase
                 const eventRef = doc(collection(db, "dispositivos", currentVehicleId, "events"));
                 await setDoc(eventRef, {
@@ -1246,7 +1246,7 @@ async function runDemoRoute() {
             // 2. Simular Bloqueo/Desbloqueo
             // Probabilidad del 5% de cambiar el estado
             let isLockEvent = Math.random() < 0.05;
-            
+
             if (isLockEvent) {
                 currentLockState = !currentLockState; // Invertir estado
                 const msg = currentLockState ? "Motor BLOQUEADO remotamente" : "Motor DESBLOQUEADO";
@@ -1270,7 +1270,7 @@ async function runDemoRoute() {
             updateBattery(battery);
             updateModelTilt(tilt);
             updateSliderUI(tilt);
-            
+
             // Actualizar icono de bloqueo en la UI
             const lockIcon = document.querySelector('#lockStatus i');
             if (currentLockState) {
@@ -1302,7 +1302,7 @@ async function runDemoRoute() {
 
                 historyRoutePoints.push({
                     name: pointName,
-                    duration: "1 min", 
+                    duration: "1 min",
                     lat: lat,
                     lng: lon
                 });
@@ -1350,7 +1350,7 @@ async function loadAnalysisData(vehicleId) {
             orderBy("timestamp", "desc"),
             limit(100)
         );
-        
+
         // 2. Eventos (Últimos 50 para seguridad)
         const eventsQuery = query(
             collection(db, "dispositivos", vehicleId, "events"),
@@ -1388,7 +1388,7 @@ async function loadAnalysisData(vehicleId) {
  * (MODIFICADO) Renderiza los 4 KPIs y las gráficas.
  */
 function renderAnalysisUI(container, pings, events, historyDays) {
-    
+
     // 1. Calcular los valores
     const kpiSafety = calculateSafetyKPI(events);
     const kpiGeo = calculateGeofenceKPI(pings);
@@ -1474,21 +1474,21 @@ function renderAnalysisUI(container, pings, events, historyDays) {
                     <ul class="list-group list-group-flush" style="max-height: 280px; overflow-y: auto;">
                         ${events.length === 0 ? '<li class="list-group-item text-muted text-center py-4">Sin eventos recientes.</li>' : ''}
                         ${events.map(e => {
-                            const date = new Date(e.timestamp);
-                            const timeStr = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                            const dateStr = date.toLocaleDateString();
-                            
-                            let icon = 'bi-info-circle text-secondary';
-                            let bgClass = '';
-                            
-                            if (e.tipo === 'inclinacion') {
-                                icon = 'bi-exclamation-triangle-fill text-danger';
-                                bgClass = 'bg-danger bg-opacity-10';
-                            } else if (e.tipo === 'bloqueo') {
-                                icon = e.activado ? 'bi-lock-fill text-danger' : 'bi-unlock-fill text-success';
-                            }
+        const date = new Date(e.timestamp);
+        const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const dateStr = date.toLocaleDateString();
 
-                            return `
+        let icon = 'bi-info-circle text-secondary';
+        let bgClass = '';
+
+        if (e.tipo === 'inclinacion') {
+            icon = 'bi-exclamation-triangle-fill text-danger';
+            bgClass = 'bg-danger bg-opacity-10';
+        } else if (e.tipo === 'bloqueo') {
+            icon = e.activado ? 'bi-lock-fill text-danger' : 'bi-unlock-fill text-success';
+        }
+
+        return `
                                 <li class="list-group-item d-flex align-items-start ${bgClass}">
                                     <div class="me-3 mt-1"><i class="bi ${icon} fs-5"></i></div>
                                     <div>
@@ -1497,7 +1497,7 @@ function renderAnalysisUI(container, pings, events, historyDays) {
                                     </div>
                                 </li>
                             `;
-                        }).join('')}
+    }).join('')}
                     </ul>
                 </div>
             </div>
@@ -1560,7 +1560,7 @@ document.addEventListener('click', function unlockAudio() {
     notificationSound.play().then(() => {
         notificationSound.pause();
         notificationSound.currentTime = 0;
-    }).catch(() => {});
+    }).catch(() => { });
 
     // Remover este listener para que no se ejecute en cada clic
     document.removeEventListener('click', unlockAudio);
@@ -1585,7 +1585,7 @@ function calculateGeofenceKPI(pings) {
     }
 
     let pointsInside = 0;
-    
+
     pings.forEach(ping => {
         // Verificar si este punto está dentro de ALGUNA de las geocercas activas
         let isInsideAny = false;
@@ -1595,7 +1595,7 @@ function calculateGeofenceKPI(pings) {
                 const dist = getDistance(ping.ubicacion.latitude, ping.ubicacion.longitude, fence.lat, fence.lon);
                 if (dist <= fence.radius) {
                     isInsideAny = true;
-                    break; 
+                    break;
                 }
             }
         }
@@ -1603,7 +1603,7 @@ function calculateGeofenceKPI(pings) {
     });
 
     const percentage = Math.round((pointsInside / pings.length) * 100);
-    
+
     // Semáforo: >80% Verde, 50-80% Amarillo, <50% Rojo
     let status = 'danger';
     if (percentage >= 80) status = 'success';
@@ -1615,11 +1615,11 @@ function calculateGeofenceKPI(pings) {
 /** KPI 3: Eficiencia (Distancia Total 7 días) */
 function calculateEfficiencyKPI(historyDays) {
     let totalKm = 0;
-    
+
     historyDays.forEach(day => {
         if (day.summary && day.summary.distance) {
             // El string suele ser "12.5 km". Extraemos el número.
-            const distString = day.summary.distance; 
+            const distString = day.summary.distance;
             const distNumber = parseFloat(distString.split(' ')[0]);
             if (!isNaN(distNumber)) totalKm += distNumber;
         }
@@ -1627,14 +1627,14 @@ function calculateEfficiencyKPI(historyDays) {
 
     // Redondear a 1 decimal
     totalKm = Math.round(totalKm * 10) / 10;
-    
+
     return { value: `${totalKm} km`, status: 'primary', text: 'Últimos 7 días' };
 }
 
 /** KPI 4: Salud de Batería (Nivel Mínimo Reciente) */
 function calculateBatteryHealthKPI(pings) {
     if (pings.length === 0) return { value: '--', status: 'secondary' };
-    
+
     // Encontrar el valor mínimo de batería en los pings recientes
     let minBat = 100;
     pings.forEach(p => {
