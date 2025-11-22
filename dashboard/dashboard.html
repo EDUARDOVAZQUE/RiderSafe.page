@@ -15,9 +15,9 @@
 
 <body>
 
-     <header id="main-header"></header>
+    <header id="main-header"></header>
 
-<section class="py-5"></section>
+    <section class="py-5"></section>
     <div id="alert-container" class="alert-container py-5"></div>
 
     <section id="activation-section" style="display: none;">
@@ -40,7 +40,7 @@
                             </form>
                             <div class="mt-4">
                                 <small class="text-muted">
-                                    ¿No tienes un código? <a href="/index.html#productos">Compra RiderSafe aquí</a>
+                                    ¿No tienes un código? <a href="../index.html#productos">Compra RiderSafe aquí</a>
                                 </small>
                             </div>
                         </div>
@@ -68,17 +68,17 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-7 col-lg-8 d-flex justify-content-md-end align-items-center mt-2 mt-md-0">
-    <div class="follow-toggle">
-                                        <input type="checkbox" id="follow-checkbox" checked>
-                                        <label for="follow-checkbox" class="ms-1">Seguir Vehículo</label>
-                                    </div>
-    <button id="run-demo-btn" class="btn btn-sm btn-warning me-3">
-        <i class="bi bi-play-circle"></i> Iniciar Demo
-    </button>
-    <ul class="nav nav-pills nav-fill" id="view-toggle" role="tablist">
-        <li class="nav-item" role="presentation">
+                        <div class="follow-toggle">
+                            <input type="checkbox" id="follow-checkbox" checked>
+                            <label for="follow-checkbox" class="ms-1">Seguir Vehículo</label>
+                        </div>
+                        <button id="run-demo-btn" class="btn btn-sm btn-warning me-3">
+                            <i class="bi bi-play-circle"></i> Iniciar Demo
+                        </button>
+                        <ul class="nav nav-pills nav-fill" id="view-toggle" role="tablist">
+                            <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="show-live-tab" data-bs-toggle="pill"
                                     data-bs-target="#live-monitoring-content" type="button" role="tab"
                                     aria-controls="live-monitoring-content" aria-selected="true">
@@ -108,7 +108,7 @@
                             <div class="map-container w-100 h-100">
                                 <div class="map-header"
                                     style="position: absolute; top: 10px; left: 10px; z-index: 1000; background: white; padding: 5px 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
-                                    
+
                                 </div>
                                 <div id="map" class="w-100 h-100"></div>
                             </div>
@@ -307,65 +307,72 @@
 
 
 
-   <div class="modal fade" id="geofenceModal" tabindex="-1" aria-labelledby="geofenceModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered"> <div class="modal-content">
-            
-            <div class="modal-header">
-                <h5 class="modal-title" id="geofenceModalLabel">Editar Geocercas</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+    <div class="modal fade" id="geofenceModal" tabindex="-1" aria-labelledby="geofenceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
 
-            <div class="modal-body">
-                <div class="row">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="geofenceModalLabel">Editar Geocercas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-                    <div class="col-md-7">
-                        <p class="small text-muted mb-2">Arrastra el marcador para mover la geocerca.</p>
-                        <div id="modal-map" style="height: 400px; width: 100%; border-radius: 8px;"></div>
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="col-md-7">
+                            <p class="small text-muted mb-2">Arrastra el marcador para mover la geocerca.</p>
+                            <div id="modal-map" style="height: 400px; width: 100%; border-radius: 8px;"></div>
+                        </div>
+
+                        <div class="col-md-5">
+
+                            <div class="mb-3">
+                                <label for="geofence-select" class="form-label">Geocerca Activa</label>
+                                <select id="geofence-select" class="form-select"></select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="geofence-name-input" class="form-label">Nombre</label>
+                                <input type="text" id="geofence-name-input" class="form-control" placeholder="Ej: Casa">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <label for="geofence-lat-input" class="form-label">Latitud</label>
+                                    <input type="number" id="geofence-lat-input" class="form-control"
+                                        placeholder="20.141" step="0.000001">
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label for="geofence-lng-input" class="form-label">Longitud</label>
+                                    <input type="number" id="geofence-lng-input" class="form-control"
+                                        placeholder="-99.205" step="0.000001">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="geofence-radius-input" class="form-label">Radio (metros)</label>
+                                <input type="number" id="geofence-radius-input" class="form-control" min="50"
+                                    value="100">
+                            </div>
+
+                            <div id="geofence-modal-error" class="alert alert-danger" style="display: none;"></div>
+                            <div id="geofence-modal-success" class="alert alert-success" style="display: none;"></div>
+
+                        </div>
                     </div>
-
-                    <div class="col-md-5">
-                        
-                        <div class="mb-3">
-                            <label for="geofence-select" class="form-label">Geocerca Activa</label>
-                            <select id="geofence-select" class="form-select"></select>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="geofence-name-input" class="form-label">Nombre</label>
-                            <input type="text" id="geofence-name-input" class="form-control" placeholder="Ej: Casa">
-                        </div>
-
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <label for="geofence-lat-input" class="form-label">Latitud</label>
-                                <input type="number" id="geofence-lat-input" class="form-control" placeholder="20.141" step="0.000001">
-                            </div>
-                            <div class="col-6 mb-3">
-                                <label for="geofence-lng-input" class="form-label">Longitud</label>
-                                <input type="number" id="geofence-lng-input" class="form-control" placeholder="-99.205" step="0.000001">
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="geofence-radius-input" class="form-label">Radio (metros)</label>
-                            <input type="number" id="geofence-radius-input" class="form-control" min="50" value="100">
-                        </div>
-
-                        <div id="geofence-modal-error" class="alert alert-danger" style="display: none;"></div>
-                        <div id="geofence-modal-success" class="alert alert-success" style="display: none;"></div>
-
-                    </div> </div> </div> <div class="modal-footer">
-                <button id="new-geofence-btn" class="btn btn-sm btn-outline-primary me-auto">
-                    <i class="bi bi-plus-circle"></i> Crear Nueva
-                </button>
-                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button id="save-geofence-btn" class="btn btn-sm btn-primary px-4">
-                    <i class="bi bi-check-circle"></i> Guardar Cambios
-                </button>
+                </div>
+                <div class="modal-footer">
+                    <button id="new-geofence-btn" class="btn btn-sm btn-outline-primary me-auto">
+                        <i class="bi bi-plus-circle"></i> Crear Nueva
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button id="save-geofence-btn" class="btn btn-sm btn-primary px-4">
+                        <i class="bi bi-check-circle"></i> Guardar Cambios
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <script src="https://cdn.jsdelivr.net/npm/fflate@0.7.4/umd/index.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>

@@ -123,18 +123,19 @@
                                 <a href="../pages/en-progreso.html" class="btn btn-success btn-lg">
                                     <i class="bi bi-person-lines-fill me-2"></i>Compra Directa con el Vendedor
                                 </a>
-                            
-                                    <form class="btn btn-outline-dark btn-lg" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                                        <input type="hidden" name="cmd" value="_s-xclick" />
-                                        <input type="hidden" name="hosted_button_id" value="XCWEJXVNNGT6G" />
-                                        <input type="hidden" name="currency_code" value="MXN" />
-                                        <input type="image"
-                                            src="https://www.paypalobjects.com/es_XC/MX/i/btn/btn_buynowCC_LG.gif"
-                                            border="0" name="submit"
-                                            title="PayPal es una forma segura y fácil de pagar en línea."
-                                            alt="Comprar ahora" />
-                                    </form>
-                                
+
+                                <form class="btn btn-outline-dark btn-lg" action="https://www.paypal.com/cgi-bin/webscr"
+                                    method="post" target="_top">
+                                    <input type="hidden" name="cmd" value="_s-xclick" />
+                                    <input type="hidden" name="hosted_button_id" value="XCWEJXVNNGT6G" />
+                                    <input type="hidden" name="currency_code" value="MXN" />
+                                    <input type="image"
+                                        src="https://www.paypalobjects.com/es_XC/MX/i/btn/btn_buynowCC_LG.gif"
+                                        border="0" name="submit"
+                                        title="PayPal es una forma segura y fácil de pagar en línea."
+                                        alt="Comprar ahora" />
+                                </form>
+
                                 <button class="btn btn-outline-primary" onclick="openContactModal('RiderSafe Básico')">
                                     <i class="bi bi-chat-dots me-2"></i>Hacer una Consulta
                                 </button>
@@ -199,79 +200,88 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="specifications" role="tabpanel">
-    <h3 class="fw-bold mb-4">Especificaciones Técnicas</h3>
-    <div class="row">
+                        <h3 class="fw-bold mb-4">Especificaciones Técnicas</h3>
+                        <div class="row">
 
-        <div class="col-md-6">
-            <table class="table table-striped">
-                <tbody>
-                    <tr>
-                        <td class="fw-semibold">
-                            Controlador Principal<br>
-                            <img src="../assets/img/esp32.webp" alt="ESP32" style="width:60px;">
-                            <a href="https://documentation.espressif.com/esp32_datasheet_en.pdf">Ficha tecnica ESP32</a>
-                        </td>
-                        <td>ESP32 (Dual-Core 240MHz, WiFi 2.4GHz, Bluetooth)</td>
-                    </tr>
+                            <div class="col-md-6">
+                                <table class="table table-striped">
+                                    <tbody>
+                                        <tr>
+                                            <td class="fw-semibold">
+                                                Controlador Principal<br>
+                                                <img src="../assets/img/esp32.webp" alt="ESP32" style="width:60px;">
+                                                <a href="https://documentation.espressif.com/esp32_datasheet_en.pdf">Ficha
+                                                    tecnica ESP32</a>
+                                            </td>
+                                            <td>ESP32 (Dual-Core 240MHz, WiFi 2.4GHz, Bluetooth)</td>
+                                        </tr>
 
-                    <tr>
-                        <td class="fw-semibold">
-                            Sensor IMU<br>
-                            <img src="../assets/img/mpu.webp" alt="MPU6050" style="width:60px;">
-                            <a href="https://uelectronics.com/wp-content/uploads/2018/02/MPU-6000-Register-Map1.pdf">Ficha tecnica MPU6050</a>
-                        </td>
-                        <td>MPU6050 (Acelerómetro + Giroscopio)</td>
-                    </tr>
+                                        <tr>
+                                            <td class="fw-semibold">
+                                                Sensor IMU<br>
+                                                <img src="../assets/img/mpu.webp" alt="MPU6050" style="width:60px;">
+                                                <a
+                                                    href="https://uelectronics.com/wp-content/uploads/2018/02/MPU-6000-Register-Map1.pdf">Ficha
+                                                    tecnica MPU6050</a>
+                                            </td>
+                                            <td>MPU6050 (Acelerómetro + Giroscopio)</td>
+                                        </tr>
 
-                    <tr>
-                        <td class="fw-semibold">Entradas/Salidas</td>
-                        <td>GPIO digitales, I2C, UART, SPI</td>
-                    </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Entradas/Salidas</td>
+                                            <td>GPIO digitales, I2C, UART, SPI</td>
+                                        </tr>
 
-                    <tr>
-                        <td class="fw-semibold">
-                            Regulador de Voltaje<br>
-                            <img src="../assets/img/regulador.webp" alt="Regulador" style="width:60px;">
-                            <a href="https://www.ti.com/lit/ds/symlink/lm317.pdf?ts=1763524356578&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252Fes-mx%252FLM317">Ficha tecnica LM317</a>
-                        </td>
-                        <td>5V – 12V (regulador DC-DC)</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                                        <tr>
+                                            <td class="fw-semibold">
+                                                Regulador de Voltaje<br>
+                                                <img src="../assets/img/regulador.webp" alt="Regulador"
+                                                    style="width:60px;">
+                                                <a
+                                                    href="https://www.ti.com/lit/ds/symlink/lm317.pdf?ts=1763524356578&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252Fes-mx%252FLM317">Ficha
+                                                    tecnica LM317</a>
+                                            </td>
+                                            <td>5V – 12V (regulador DC-DC)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
-        <div class="col-md-6">
-            <table class="table table-striped">
-                <tbody>
-                    <tr>
-                        <td class="fw-semibold">
-                            Relevador<br>
-                            <img src="../assets/img/relevador.webp" alt="Relevador" style="width:60px;">
-                            <a href="https://media.master.com.mx/fichas/ESTUDIANTES_Y_TECNICOS/ARDUINOS/AR-1RELAY.pdf">Ficha tecnica Relevador</a>
-                        </td>
-                        <td>Relé eléctrico 5V / 10A</td>
-                    </tr>
+                            <div class="col-md-6">
+                                <table class="table table-striped">
+                                    <tbody>
+                                        <tr>
+                                            <td class="fw-semibold">
+                                                Relevador<br>
+                                                <img src="../assets/img/relevador.webp" alt="Relevador"
+                                                    style="width:60px;">
+                                                <a
+                                                    href="https://media.master.com.mx/fichas/ESTUDIANTES_Y_TECNICOS/ARDUINOS/AR-1RELAY.pdf">Ficha
+                                                    tecnica Relevador</a>
+                                            </td>
+                                            <td>Relé eléctrico 5V / 10A</td>
+                                        </tr>
 
-                    <tr>
-                        <td class="fw-semibold">Consumo</td>
-                        <td>120mA – 500mA típico</td>
-                    </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Consumo</td>
+                                            <td>120mA – 500mA típico</td>
+                                        </tr>
 
-                    <tr>
-                        <td class="fw-semibold">Dimensiones</td>
-                        <td>85 x 55 x 20 mm (aprox.)</td>
-                    </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Dimensiones</td>
+                                            <td>85 x 55 x 20 mm (aprox.)</td>
+                                        </tr>
 
-                    <tr>
-                        <td class="fw-semibold">Peso</td>
-                        <td>~120 g con componentes</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                                        <tr>
+                                            <td class="fw-semibold">Peso</td>
+                                            <td>~120 g con componentes</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
-    </div>
-</div>
+                        </div>
+                    </div>
 
                     <div class="tab-pane fade" id="installation" role="tabpanel">
                         <div class="row">
@@ -378,7 +388,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="/assets/js/main.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
 </body>
 
 </html>

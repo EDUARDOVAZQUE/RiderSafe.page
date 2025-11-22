@@ -145,7 +145,7 @@ export async function logout() {
     try {
         await signOut(auth);
         if (window.location.pathname.includes("dashboard")) {
-            window.location.href = "/index.html";
+            window.location.href = "../index.html";
         }
     } catch (error) {
         console.error("[Auth] Error en logout:", error);
@@ -242,7 +242,7 @@ export const checkAuthStatus = () => {
     return new Promise((resolve) => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             unsubscribe();
-             // Resolver solo si el usuario existe Y está verificado
+            // Resolver solo si el usuario existe Y está verificado
             if (user && user.emailVerified) {
                 resolve(user);
             } else {

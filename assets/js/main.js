@@ -8,7 +8,7 @@ import { initContactForm } from "./modules/contact.js";
 // =========================================================================
 //  FUNCIONES GLOBALES (Expuestas para ser llamadas desde el HTML con onclick)
 // =========================================================================
-window.toggleSpecs = function(product) {
+window.toggleSpecs = function (product) {
     const shortSpecs = document.getElementById(`${product}-specs-short`);
     const detailedSpecs = document.getElementById(`${product}-specs-detailed`);
     const toggleText = document.getElementById(`${product}-toggle-text`);
@@ -19,12 +19,12 @@ window.toggleSpecs = function(product) {
     if (toggleText) toggleText.textContent = isHidden ? "Ver Menos" : "Ver Más";
 };
 
-window.changeMainImage = function(src) {
+window.changeMainImage = function (src) {
     const mainImage = document.getElementById("mainImage");
     if (mainImage) mainImage.src = src;
 };
 
-window.openContactModal = function(productName) {
+window.openContactModal = function (productName) {
     const contactModalElem = document.getElementById("contactModal");
     if (!contactModalElem) return;
     const contactModal = new window.bootstrap.Modal(contactModalElem);
@@ -40,36 +40,51 @@ window.openContactModal = function(productName) {
 // =========================================================================
 //  PUNTO DE ENTRADA PRINCIPAL DE LA APLICACIÓN
 // =========================================================================
+// =========================================================================
+//  PUNTO DE ENTRADA PRINCIPAL DE LA APLICACIÓN
+// =========================================================================
 document.addEventListener("DOMContentLoaded", async () => {
     initAuth(); // Inicia el listener de UI para login/logout
 
+    // Función para determinar la ruta base relativa
+    function getBasePath() {
+        const path = window.location.pathname;
+        // Detecta si estamos en una subcarpeta conocida (dashboard, products, pages)
+        // Funciona tanto para servidor web (/) como para sistema de archivos (\ o /)
+        if (path.match(/[\/\\](dashboard|products|pages)[\/\\]/)) {
+            return "../";
+        }
+        return "./";
+    }
+
+    const basePath = getBasePath();
     const isDashboard = window.location.pathname.includes("dashboard");
 
     if (isDashboard) {
         // --- LÓGICA PARA LA PÁGINA DEL DASHBOARD ---
         const user = await checkAuthStatus();
         if (user) {
-            await loadComponent("/components/header.html", document.getElementById("main-header"));
+            await loadComponent(basePath + "components/header.html", document.getElementById("main-header"));
             initHeaderEvents();
             const { initDashboard } = await import("./modules/dashboard.js");
             initDashboard();
         } else {
-            window.location.href = "/index.html";
+            window.location.href = basePath + "index.html";
         }
     } else {
         // --- LÓGICA PARA TODAS LAS OTRAS PÁGINAS ---
-        await loadCommonComponents();
+        await loadCommonComponents(basePath);
         initHeaderEvents();
 
         const formContainer = document.getElementById("form-container");
         if (formContainer) {
-            await loadComponent("/components/form.html", formContainer);
+            await loadComponent(basePath + "components/form.html", formContainer);
             initContactForm();
         }
 
         const reviewsContainer = document.getElementById("reviews-container");
         if (reviewsContainer) {
-            await loadComponent("/components/reviews.html", reviewsContainer);
+            await loadComponent(basePath + "components/reviews.html", reviewsContainer);
             const { initReviewSystem } = await import("./reviews.js");
             initReviewSystem();
         }
@@ -77,9 +92,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const authContainer = document.getElementById("auth-container");
         if (authContainer) {
             // Carga el HTML del modal
-            await loadComponent("/components/auth.html", authContainer);
+            await loadComponent(basePath + "components/auth.html", authContainer);
             // Llama a la función actualizada que está al final de este archivo
-            initAuthModal(); 
+            initAuthModal();
         }
     }
     const heroCarousel = document.getElementById('heroCarousel');
@@ -87,11 +102,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const progressBar = heroCarousel.querySelector('.carousel-progress-bar');
 
         const resetAnimation = () => {
-            const interval = heroCarousel.getAttribute('data-bs-interval') || 5000; 
-            progressBar.style.animationDuration = `${interval}ms`; 
+            const interval = heroCarousel.getAttribute('data-bs-interval') || 5000;
+            progressBar.style.animationDuration = `${interval}ms`;
 
             progressBar.classList.remove('animate');
-            void progressBar.offsetWidth; 
+            void progressBar.offsetWidth;
             progressBar.classList.add('animate');
         };
 
@@ -100,7 +115,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     setupNavbarScrollEffect();
-    markActiveNavLink(); 
+    markActiveNavLink();
 });
 
 // =========================================================================
@@ -128,10 +143,10 @@ function initAuthModal() {
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
     const resetPasswordForm = document.getElementById('resetPasswordForm');
-    
+
     const showResetPanelLink = document.getElementById('showResetPanelLink');
     const showLoginPanelLink = document.getElementById('showLoginPanelLink');
-    
+
     const authTabs = document.getElementById('authTabs');
     const loginTabButton = document.getElementById('login-tab-button');
 
@@ -189,9 +204,9 @@ function initAuthModal() {
             clearAuthMessages(loginForm);
             const email = loginForm.email.value;
             const password = loginForm.password.value;
-            
+
             // Llama a la función 'login' importada
-            const result = await login(email, password); 
+            const result = await login(email, password);
             if (!result.success) {
                 showAuthError(loginForm, result.error);
             }
@@ -204,7 +219,7 @@ function initAuthModal() {
         registerForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             clearAuthMessages(registerForm);
-            
+
             const fullName = registerForm.fullName.value;
             const email = registerForm.email.value;
             const password = registerForm.password.value;
@@ -214,20 +229,20 @@ function initAuthModal() {
                 showAuthError(registerForm, "Las contraseñas no coinciden");
                 return;
             }
-            
+
             // Llama a la función 'register' importada
-            const result = await register(fullName, email, password); 
-            
+            const result = await register(fullName, email, password);
+
             if (result.success) {
                 registerForm.reset();
                 // Muestra el mensaje de "Verifica tu correo"
-                showAuthSuccess(registerForm, result.message); 
+                showAuthSuccess(registerForm, result.message);
             } else {
                 showAuthError(registerForm, result.error);
             }
         });
     }
-    
+
     // Listener del Formulario de Reestablecer Contraseña
     if (resetPasswordForm) {
         resetPasswordForm.addEventListener('submit', async (e) => {
@@ -236,7 +251,7 @@ function initAuthModal() {
 
             const email = resetPasswordForm.email.value;
             // Llama a la nueva función 'resetPassword' importada
-            const result = await resetPassword(email); 
+            const result = await resetPassword(email);
 
             if (result.success) {
                 resetPasswordForm.reset();
@@ -281,7 +296,7 @@ function showAuthSuccess(form, message) {
  * @param {HTMLElement} form El formulario a limpiar.
  */
 function clearAuthMessages(form) {
-    if(form) {
+    if (form) {
         const errorDiv = form.querySelector('.form-error');
         const successDiv = form.querySelector('.form-success');
         if (errorDiv) {

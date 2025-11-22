@@ -11,7 +11,25 @@ export async function loadComponent(url, container) {
     try {
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Componente no encontrado: ${url}`);
-        container.innerHTML = await response.text();
+
+        let htmlContent = await response.text();
+
+        // --- FIX: Ajustar rutas relativas en el contenido cargado ---
+        // Si la URL del componente contiene "header.html" o "footer.html",
+        // reemplazamos las rutas absolutas (que empiezan con /) por rutas relativas.
+        // Esto asume que 'url' ya viene con el basePath correcto (ej: ../components/header.html)
+
+        // Extraemos el basePath de la URL del componente (todo antes de 'components/')
+        const basePathMatch = url.match(/^(.*)components\//);
+        const basePath = basePathMatch ? basePathMatch[1] : "./";
+
+        // Reemplazamos href="/..." y src="/..." por href="basePath..." y src="basePath..."
+        // Nota: Esto es una solución simple. Para casos más complejos, se necesitaría un parser.
+        htmlContent = htmlContent.replace(/(href|src)=["']\/(.*?)["']/g, (match, attr, path) => {
+            return `${attr}="${basePath}${path}"`;
+        });
+
+        container.innerHTML = htmlContent;
         return true;
     } catch (error) {
         console.error(`[UI] Error al cargar ${url}:`, error);
@@ -21,11 +39,12 @@ export async function loadComponent(url, container) {
 
 /**
  * Carga todos los componentes comunes de la página (header, footer).
+ * @param {string} basePath - La ruta base relativa (ej: "./" o "../").
  */
-export async function loadCommonComponents() {
+export async function loadCommonComponents(basePath = "./") {
     const components = [
-        { container: document.getElementById("main-header"), path: "/components/header.html" },
-        { container: document.getElementById("main-footer"), path: "/components/footer.html" },
+        { container: document.getElementById("main-header"), path: basePath + "components/header.html" },
+        { container: document.getElementById("main-footer"), path: basePath + "components/footer.html" },
     ];
     await Promise.all(components.map(comp => loadComponent(comp.path, comp.container)));
 }
