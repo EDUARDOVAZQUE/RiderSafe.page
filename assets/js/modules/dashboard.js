@@ -427,7 +427,7 @@ function init3D() {
     scene.add(dirLight);
 
     const loader = new THREE.FBXLoader();
-    loader.load("/dashboard/motorexp.fbx", (object) => {
+    loader.load("./motorexp.fbx", (object) => {
         model = object;
         model.scale.set(0.6, 0.6, 0.6);
         model.position.set(2, -2.5, 0);
