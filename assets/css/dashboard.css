@@ -374,3 +374,13 @@
     background-color: #fffaf0;
     color: #c05621;
 }
+/* Agrega esto a tu CSS si no lo tienes */
+.alert-toast.warning {
+    background-color: #fff3cd; /* Fondo amarillo claro */
+    color: #856404;            /* Texto amarillo oscuro */
+    border-left: 5px solid #ffc107; /* Borde izquierdo amarillo intenso */
+}
+
+/* Referencia de los otros estilos que probablemente ya tienes: */
+/* .alert-toast.error { background-color: #f8d7da; ... border-left: 5px solid #dc3545; } */
+/* .alert-toast.success { background-color: #d4edda; ... border-left: 5px solid #28a745; } */

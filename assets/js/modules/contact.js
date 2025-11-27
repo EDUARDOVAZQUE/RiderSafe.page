@@ -1,21 +1,72 @@
-// contact.js - Módulo para el formulario de contacto con EmailJS
+// assets/js/modules/contact.js
+
+// ==========================================
+//  1. CONFIGURACIÓN CENTRALIZADA
+// ==========================================
+// Asegúrate de que NO haya espacios en blanco al inicio o final de este string
+const EMAILJS_PUBLIC_KEY = "vNkBs9jnWWeWMJrDC"; 
+const SERVICE_ID = "service_ww8hymc";
+
+// Template para el Formulario de Contacto
+const CONTACT_TEMPLATE_ID = "template_r88a313";
+
+// Template para el Envío de Licencia
+// RECUERDA: Verifica que este ID sea el de tu nuevo template de licencia
+const LICENSE_TEMPLATE_ID = "template_ju00jko"; 
 
 let emailJSInitialized = false;
 
 /**
- * Inicializa el formulario de contacto, configura EmailJS y añade listeners.
+ * Inicializa EmailJS.
+ * CORRECCIÓN: Pasamos la key directamente como string para mayor compatibilidad con CDN v3.
  */
-export function initContactForm() {
+function ensureEmailJSInitialized() {
     if (!emailJSInitialized && window.emailjs) {
-        window.emailjs.init({ publicKey: "vNkBs9jnWWeWMJrDC" });
+        // Corrección: Pasamos el string directo en lugar de objeto para evitar errores en v3
+        window.emailjs.init(EMAILJS_PUBLIC_KEY);
         emailJSInitialized = true;
+        console.log("[EmailJS] Inicializado correctamente.");
     }
+}
+
+// ==========================================
+//  2. FUNCIÓN PARA EL DASHBOARD / COMPRA
+// ==========================================
+
+export async function sendLicenseEmail(email, name, code, plan) {
+    ensureEmailJSInitialized();
+
+    const templateParams = {
+        to_email: email,
+        to_name: name,
+        license_code: code,
+        plan_name: plan
+    };
+
+    try {
+        // CORRECCIÓN CRÍTICA: Pasamos EMAILJS_PUBLIC_KEY como 4to argumento.
+        // Esto garantiza que la key se envíe incluso si el init() falló.
+        await window.emailjs.send(SERVICE_ID, LICENSE_TEMPLATE_ID, templateParams, EMAILJS_PUBLIC_KEY);
+        console.log(`[Email] Licencia enviada a ${email}`);
+        return true;
+    } catch (error) {
+        console.error("[Email] Error enviando licencia:", error);
+        return false;
+    }
+}
+
+// ==========================================
+//  3. FUNCIONES PARA EL FORMULARIO DE CONTACTO
+// ==========================================
+
+export function initContactForm() {
+    ensureEmailJSInitialized();
 
     const contactForm = document.getElementById("contactForm");
     if (contactForm) {
+        contactForm.removeEventListener("submit", handleFormSubmit);
         contactForm.addEventListener("submit", handleFormSubmit);
 
-        // Listener para el crecimiento automático del textarea
         const messageTextarea = contactForm.querySelector("#message");
         if (messageTextarea) {
             messageTextarea.addEventListener('input', autoGrowTextarea);
@@ -23,54 +74,12 @@ export function initContactForm() {
     }
 }
 
-/**
- * Valida los campos del formulario antes de enviarlo.
- * @param {HTMLFormElement} form - El formulario a validar.
- * @returns {boolean} - True si el formulario es válido, false si no.
- */
-function validateForm(form) {
-    const feedbackDiv = form.querySelector("#form-feedback");
-    feedbackDiv.innerHTML = ""; // Limpiar errores previos
-
-    const name = form.querySelector("#name").value.trim();
-    const email = form.querySelector("#email").value.trim();
-    const phone = form.querySelector("#phone").value.trim();
-    const subject = form.querySelector("#subject").value.trim();
-    const message = form.querySelector("#message").value.trim();
-
-    // Verificación de campos obligatorios
-    if (!name || !email || !subject || !message) {
-        feedbackDiv.innerHTML = `<div class="alert alert-danger">Por favor, completa todos los campos obligatorios (*).</div>`;
-        return false;
-    }
-
-    // Verificación de formato de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        feedbackDiv.innerHTML = `<div class="alert alert-danger">Por favor, ingresa un correo electrónico válido.</div>`;
-        return false;
-    }
-
-    // Verificación de formato de teléfono (si se ingresó)
-    const phoneRegex = /^[0-9\s-]{10,}$/;
-    if (phone && !phoneRegex.test(phone)) {
-        feedbackDiv.innerHTML = `<div class="alert alert-danger">Por favor, ingresa un número de teléfono válido (al menos 10 dígitos).</div>`;
-        return false;
-    }
-
-    return true; // Si todas las validaciones pasan
-}
-
-/**
- * Maneja la lógica de envío del formulario.
- */
 async function handleFormSubmit(e) {
     e.preventDefault();
     const form = e.target;
 
-    // Ejecuta la validación antes de continuar
     if (!validateForm(form)) {
-        return; // Detiene el envío si el formulario no es válido
+        return; 
     }
     
     const feedbackDiv = form.querySelector("#form-feedback");
@@ -88,15 +97,10 @@ async function handleFormSubmit(e) {
     setButtonLoadingState(submitBtn, true);
 
     try {
-        if (!window.emailjs) throw new Error("La librería de EmailJS no está disponible.");
-
-        const serviceID = "service_ww8hymc";
-        const templateID = "template_r88a313";
-
-        await window.emailjs.send(serviceID, templateID, templateParams);
+        // CORRECCIÓN CRÍTICA: Aquí también pasamos la Public Key explícitamente
+        await window.emailjs.send(SERVICE_ID, CONTACT_TEMPLATE_ID, templateParams, EMAILJS_PUBLIC_KEY);
         
         form.reset();
-        // Restablece la altura del textarea después de enviar
         const messageTextarea = form.querySelector("#message");
         if(messageTextarea) messageTextarea.style.height = 'auto';
 
@@ -110,19 +114,46 @@ async function handleFormSubmit(e) {
     }
 }
 
-/**
- * Hace que un textarea crezca verticalmente según su contenido.
- * @param {Event} event - El evento 'input' del textarea.
- */
-function autoGrowTextarea(event) {
-    const textarea = event.target;
-    textarea.style.height = 'auto'; // Resetea la altura
-    textarea.style.height = `${textarea.scrollHeight}px`; // Ajusta la altura al contenido
+// ==========================================
+//  4. FUNCIONES AUXILIARES
+// ==========================================
+
+function validateForm(form) {
+    const feedbackDiv = form.querySelector("#form-feedback");
+    feedbackDiv.innerHTML = "";
+
+    const name = form.querySelector("#name").value.trim();
+    const email = form.querySelector("#email").value.trim();
+    const phone = form.querySelector("#phone").value.trim();
+    const subject = form.querySelector("#subject").value.trim();
+    const message = form.querySelector("#message").value.trim();
+
+    if (!name || !email || !subject || !message) {
+        feedbackDiv.innerHTML = `<div class="alert alert-danger">Por favor, completa todos los campos obligatorios (*).</div>`;
+        return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        feedbackDiv.innerHTML = `<div class="alert alert-danger">Por favor, ingresa un correo electrónico válido.</div>`;
+        return false;
+    }
+
+    const phoneRegex = /^[0-9\s-]{10,}$/;
+    if (phone && !phoneRegex.test(phone)) {
+        feedbackDiv.innerHTML = `<div class="alert alert-danger">Por favor, ingresa un número de teléfono válido (al menos 10 dígitos).</div>`;
+        return false;
+    }
+
+    return true;
 }
 
-/**
- * Cambia el estado visual del botón de envío.
- */
+function autoGrowTextarea(event) {
+    const textarea = event.target;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+}
+
 function setButtonLoadingState(button, isLoading) {
     button.disabled = isLoading;
     const submitText = button.querySelector(".submit-text");

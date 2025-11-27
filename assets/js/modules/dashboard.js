@@ -1,7 +1,7 @@
 // dashboard.js - Módulo del sistema de monitoreo de vehículos RiderSafe
 
 import { db } from "../config/firebase-config.js";
-import { doc, onSnapshot, getDoc, collection, updateDoc, GeoPoint, setDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { doc, onSnapshot, getDoc, collection, updateDoc, GeoPoint, setDoc,getDocs, query, orderBy, limit  } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 import { getCurrentUser, getUserData, activateProductCode } from "./auth.js";
 // (El resto de tus imports)
 let map, motorcycleMarker, model, scene, camera, renderer;
@@ -17,8 +17,18 @@ let historyMapToday = null;
 let activeEditingGeofenceSlot = null;
 let geofenceModalInstance = null;
 let historyMapYesterday = null;
+let lastTiltZone = "safe"; // Valores posibles: 'safe', 'warning', 'danger', 'fall'
 // --- (NUEVO) Variable para la gráfica de batería ---
 let batteryChartInstance = null;
+// Al inicio del archivo dashboard.js
+let isVehicleLocked = false; // Variable para guardar el estado real
+let isTogglingLock = false;  // Para evitar doble click rápido
+// Variable para guardar la posición donde se bloqueó la moto
+let lastLockedLocation = null;
+let whatsappAlertsEnabled = true; // Por defecto activado
+
+const waPhone = "5217731999004"; // TU NÚMERO (521 + 10 dígitos en México)
+const waApiKey = "5859614";       // LA API KEY QUE TE DIO EL BOT
 
 function updateHeaderUI(user) {
     const loginBtn = document.getElementById('loginBtn');
@@ -107,29 +117,60 @@ function showDashboardView() {
     if (dashboardSection) dashboardSection.style.display = "block";
 }
 
+/**
+ * Maneja el envío del formulario de activación de código.
+ * @param {Event} e 
+ */
 async function handleActivationSubmit(e) {
     e.preventDefault();
+    const form = e.target; // Obtener el formulario para deshabilitarlo
     const codeInput = document.getElementById("activation-code");
+    const submitButton = form.querySelector('button[type="submit"]'); // Asumiendo que el botón está dentro del form
+    
     const errorMsg = document.getElementById("activation-error");
     const successMsg = document.getElementById("activation-success");
+    
     const code = codeInput.value.trim();
 
+    // 1. Validación inicial
     if (!code) {
         errorMsg.textContent = "Por favor, ingresa un código de activación.";
         errorMsg.style.display = "block";
         return;
     }
+    
+    // Ocultar mensajes previos
+    errorMsg.style.display = "none";
+    successMsg.style.display = "none";
+    
+    // 2. Control de envío (UX)
+    submitButton.disabled = true;
+    submitButton.textContent = "Activando..."; // Feedback visual
 
-    const result = await activateProductCode(code);
-    if (result.success) {
-        successMsg.textContent = `¡Código activado! Plan ${result.plan.toUpperCase()} registrado. Recargando...`;
-        successMsg.style.display = "block";
-        errorMsg.style.display = "none";
-        setTimeout(() => window.location.reload(), 2500);
-    } else {
-        errorMsg.textContent = result.error;
+    try {
+        // 3. Llamada a la lógica central (la función atómica en auth.js)
+        const result = await activateProductCode(code);
+        
+        if (result.success) {
+            successMsg.textContent = `✅ ¡Código activado! Plan ${result.plan.toUpperCase()} registrado. Recargando...`;
+            successMsg.style.display = "block";
+            // Recargar después de éxito
+            setTimeout(() => window.location.reload(), 2500);
+        } else {
+            // Muestra el mensaje de error específico que viene de la transacción
+            errorMsg.textContent = result.error;
+            errorMsg.style.display = "block";
+        }
+    } catch (error) {
+        // Captura errores inesperados de red o JS
+        errorMsg.textContent = "Error de red. Inténtalo de nuevo.";
         errorMsg.style.display = "block";
-        successMsg.style.display = "none";
+    } finally {
+        // 4. Resetear el botón (solo si no se recarga)
+        if (!successMsg.style.display || successMsg.style.display === "none") {
+            submitButton.disabled = false;
+            submitButton.textContent = "Activar Código";
+        }
     }
 }
 
@@ -230,6 +271,8 @@ function setupFirestoreListener(vehicleId) {
         console.error("Error en la escucha de Firestore:", error);
         updateConnectionStatus(false);
     });
+
+
 }
 
 function setupEventListeners() {
@@ -252,7 +295,7 @@ function setupEventListeners() {
     const editBtn = document.getElementById('edit-name-btn');
     const saveBtn = document.getElementById('save-name-btn');
     const cancelBtn = document.getElementById('cancel-name-btn');
-
+    
     if (editBtn) {
         editBtn.onclick = () => toggleVehicleNameEdit(true);
     }
@@ -264,27 +307,51 @@ function setupEventListeners() {
     }
 }
 // --- Listener para el botón de Demo ---
-// --- Listener para el botón de Demo ---
-const demoBtn = document.getElementById('run-demo-btn');
-if (demoBtn) {
-    demoBtn.onclick = () => {
+   // --- Listener para el botón de Demo ---
+    const demoBtn = document.getElementById('run-demo-btn');
+    if (demoBtn) {
+        demoBtn.onclick = () => {
+            
+            // 1. DESBLOQUEO FORZOSO DE AUDIO
+            // Esto DEBE ocurrir aquí, directo en el clic, antes de cualquier confirm() o async
+            notificationSound.play()
+                .then(() => {
+                    notificationSound.pause();
+                    notificationSound.currentTime = 0;
+                    console.log("🔊 Audio desbloqueado correctamente.");
+                })
+                .catch(e => console.warn("⚠️ No se pudo desbloquear audio:", e));
 
-        // 1. DESBLOQUEO FORZOSO DE AUDIO
-        // Esto DEBE ocurrir aquí, directo en el clic, antes de cualquier confirm() o async
-        notificationSound.play()
-            .then(() => {
-                notificationSound.pause();
-                notificationSound.currentTime = 0;
-                console.log("🔊 Audio desbloqueado correctamente.");
-            })
-            .catch(e => console.warn("⚠️ No se pudo desbloquear audio:", e));
+            // 2. Pedir confirmación
+            if (confirm("¿Iniciar simulación de ruta? Esto sobrescribirá el historial de 'Hoy' para este vehículo.")) {
+                runDemoRoute();
+            }
+        };
+    }
+    const lockCard = document.getElementById("card-lock-toggle");
+    if (lockCard) {
+        lockCard.onclick = toggleMotorLock;
+    }
 
-        // 2. Pedir confirmación
-        if (confirm("¿Iniciar simulación de ruta? Esto sobrescribirá el historial de 'Hoy' para este vehículo.")) {
-            runDemoRoute();
-        }
-    };
-}
+    const waCheckbox = document.getElementById("whatsapp-toggle");
+    if (waCheckbox) {
+        // 1. Sincronizar estado inicial
+        waCheckbox.checked = whatsappAlertsEnabled;
+        
+        // 2. Escuchar cambios
+        waCheckbox.addEventListener("change", (e) => {
+            whatsappAlertsEnabled = e.target.checked;
+            
+            // Feedback visual opcional
+            if (whatsappAlertsEnabled) {
+                showAlert("Alertas de WhatsApp ACTIVADAS", "success");
+            } else {
+                showAlert("Alertas de WhatsApp DESACTIVADAS", "warning");
+            }
+            console.log("Estado alertas WhatsApp:", whatsappAlertsEnabled);
+        });
+    }
+
 function updateUIWithDefaults() {
     updateBattery(0);
     updateSpeed(0);
@@ -300,53 +367,7 @@ function updateUIWithDefaults() {
 
 
 
-// --- PASO 2: Modificado para aceptar 'geofences' como parámetro ---
-function updateUIFromData(data, geofences) {
-    // (Req 2) Si un valor no existe, se usa 0
-    updateBattery(data.bateria || 0);
-    updateSpeed(data.velocidad || 0);
-    updateModelTilt(data.inclinacion || 0);
-    updateSliderUI(data.inclinacion || 0);
 
-    const displayName = data.friendlyName || currentVehicleId; // Usar ID si no hay nombre
-    const nameDisplay = document.getElementById('vehicle-name-display');
-    if (nameDisplay) {
-        nameDisplay.textContent = displayName;
-    }
-    // (Poner el nombre en el input de edición también, para que esté listo si edita)
-    const nameInput = document.getElementById('vehicle-name-input');
-    if (nameInput) {
-        nameInput.value = displayName;
-    }
-
-    if (data.ubicacion && data.ubicacion.latitude && data.ubicacion.longitude) {
-        updateMapLocation(data.ubicacion.latitude, data.ubicacion.longitude);
-
-        // --- Lógica clave ---
-        // Pasa las geocercas (el array) a checkGeofences
-        checkGeofences(data.ubicacion.latitude, data.ubicacion.longitude, geofences);
-    } else {
-        // No hay ubicación, no se pueden chequear geocercas, pero sí dibujarlas
-        checkGeofences(null, null, geofences);
-    }
-
-    // Evitar redibujar si la configuración no ha cambiado
-    const oldGeoSignature = currentVehicleGeofences
-        .map(g => `${g.id}${g.name}${g.radius}${g.lat}${g.lon}${g.active}`)
-        .join();
-    const newGeoSignature = geofences
-        .map(g => `${g.id}${g.name}${g.radius}${g.lat}${g.lon}${g.active}`)
-        .join();
-
-    if (oldGeoSignature !== newGeoSignature) {
-        console.log("[Geofence] Detectado cambio en la configuración de geocercas, redibujando.");
-        updateGeofenceListUI(geofences);
-        drawGeofencesOnMap(geofences);
-        loadGeofencesInModal(geofences);
-    }
-
-    currentVehicleGeofences = geofences;
-}
 
 
 function updateBattery(percentage) {
@@ -494,9 +515,9 @@ function checkGeofences(lat, lon, geofences) {
         if (!lat || !lon || !fence.active) {
             fence.isInside = false;
             updateGeofenceUI(index, false);
-            return;
+            return; 
         }
-
+        
         const distance = getDistance(lat, lon, fence.lat, fence.lon);
         const wasInside = oldGeofences[index] ? oldGeofences[index].isInside : false;
         const isNowInside = distance <= fence.radius;
@@ -508,9 +529,9 @@ function checkGeofences(lat, lon, geofences) {
             fence.isInside = false;
             showAlert(`Saliendo de ${fence.name}`, "exit");
         } else {
-            fence.isInside = wasInside;
+            fence.isInside = wasInside; 
         }
-
+        
         updateGeofenceUI(index, fence.isInside);
     });
 }
@@ -616,15 +637,25 @@ function setupModal() {
 
     geofenceModalInstance = new bootstrap.Modal(modalEl);
 
+    // --- CAMBIO 1: AL HACER CLIC, SOLO MOSTRAMOS EL MODAL ---
     openBtn.onclick = () => {
-        loadGeofencesInModal(currentVehicleGeofences);
+        // ELIMINADO: loadGeofencesInModal(currentVehicleGeofences); 
+        // No cargamos datos aquí todavía.
         geofenceModalInstance.show();
     };
 
+    // --- CAMBIO 2: CARGAMOS DATOS SOLO CUANDO EL MODAL YA ES VISIBLE ---
     modalEl.addEventListener("shown.bs.modal", () => {
-        initModalMap();
+        initModalMap(); // 1. Creamos el mapa
+        
+        // 2. AHORA SÍ cargamos las geocercas (porque modalMap ya existe)
+        loadGeofencesInModal(currentVehicleGeofences); 
+
+        // 3. Opcional: Cargar el editor si hay algo seleccionado
         const selectedIndex = document.getElementById("geofence-select").value;
-        loadGeofenceInModalEditor(Number(selectedIndex));
+        if (selectedIndex) {
+            loadGeofenceInModalEditor(Number(selectedIndex));
+        }
     });
 
     select.onchange = e => loadGeofenceInModalEditor(Number(e.target.value));
@@ -641,14 +672,13 @@ function setupModal() {
     lngInput.oninput = updateModalMarkerFromInputs;
 }
 
-
 function initModalMap() {
     // Si el mapa ya existe, solo ajusta su tamaño
     if (modalMap) {
         modalMap.invalidateSize();
         return;
     }
-
+    
     // Si no existe, créalo
     const defaultCenter = [19.4326, -99.1332]; // CDMX
     modalMap = L.map("modal-map").setView(defaultCenter, 14);
@@ -781,31 +811,57 @@ function showAlert(message, type) {
     const container = document.getElementById("alert-container");
     if (!container) return;
 
-    // 1. Reproducir Sonido (Solo si el navegador lo permite)
-    notificationSound.currentTime = 0;
-    notificationSound.play().catch(error => {
-        // Ignoramos el error silenciosamente si aún no se ha interactuado
-        // Pero como usamos Base64, es menos probable que falle por red.
-        console.log("Audio esperando interacción del usuario.");
-    });
+    // 1. Reproducir Sonido (Intenta reproducir si el navegador lo permite)
+    // Asumimos que 'notificationSound' ya está declarada globalmente como en tu código original
+    if (typeof notificationSound !== 'undefined') {
+        notificationSound.currentTime = 0;
+        notificationSound.play().catch(error => {
+            // Ignoramos errores de autoplay si el usuario no ha interactuado aún
+            console.log("Audio esperando interacción del usuario."); 
+        });
+    }
 
     // 2. Crear la Alerta Visual
     const alertDiv = document.createElement("div");
+    // Agrega la clase base y el tipo (ej: "alert-toast warning")
     alertDiv.className = `alert-toast ${type}`;
-
+    
     let iconHtml = '';
-    if (type === 'error') iconHtml = '<i class="bi bi-exclamation-circle-fill me-2 fs-5"></i>';
-    else if (type === 'success') iconHtml = '<i class="bi bi-check-circle-fill me-2 fs-5"></i>';
-    else if (type === 'enter') iconHtml = '<i class="bi bi-geo-alt-fill me-2 fs-5"></i>';
-    else if (type === 'exit') iconHtml = '<i class="bi bi-box-arrow-right me-2 fs-5"></i>';
+
+    // --- SELECCIÓN DE ICONOS ---
+    if (type === 'error') {
+        // Rojo: Círculo de exclamación
+        iconHtml = '<i class="bi bi-exclamation-circle-fill me-2 fs-5"></i>';
+    } 
+    else if (type === 'success') {
+        // Verde: Check
+        iconHtml = '<i class="bi bi-check-circle-fill me-2 fs-5"></i>';
+    } 
+    else if (type === 'warning') {
+        // (NUEVO) Amarillo: Triángulo de advertencia
+        iconHtml = '<i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>';
+    } 
+    else if (type === 'enter') {
+        // Azul: Pin de mapa
+        iconHtml = '<i class="bi bi-geo-alt-fill me-2 fs-5"></i>';
+    } 
+    else if (type === 'exit') {
+        // Gris/Naranja: Flecha de salida
+        iconHtml = '<i class="bi bi-box-arrow-right me-2 fs-5"></i>';
+    }
 
     alertDiv.innerHTML = `${iconHtml}<div>${message}</div>`;
-
+    
     container.appendChild(alertDiv);
 
+    // 3. Animaciones CSS
+    // Pequeño delay de 10ms para permitir que la transición CSS de "opacity" funcione
     setTimeout(() => alertDiv.classList.add("show"), 10);
+
+    // 4. Eliminar automáticamente después de 5 segundos
     setTimeout(() => {
         alertDiv.classList.remove("show");
+        // Esperar a que termine la animación de desaparición antes de borrar del DOM
         alertDiv.addEventListener("transitionend", () => alertDiv.remove());
     }, 5000);
 }
@@ -983,40 +1039,73 @@ function generateHistoryPaneHTML(dayId, dayData) {
 }
 
 function initHistoryMap(mapId, points, mapInstanceVar) {
+    // 1. Validar si hay puntos
     if (!points || points.length === 0) {
         console.log(`[History] No hay puntos de ruta para el mapa ${mapId}.`);
         return;
     }
 
-    if (mapInstanceVar === 'historyMapToday' && historyMapToday) return;
-    if (mapInstanceVar === 'historyMapYesterday' && historyMapYesterday) return;
+    // 2. Si el mapa YA existe, solo ajustamos el zoom (no lo creamos de nuevo)
+    if (mapInstanceVar === 'historyMapToday' && historyMapToday) {
+        setTimeout(() => {
+            historyMapToday.invalidateSize(); // Recalcula dimensiones
+            const latLngs = points.map(p => [p.lat, p.lng]);
+            // ZOOM AUTOMÁTICO
+            historyMapToday.fitBounds(L.polyline(latLngs).getBounds(), { padding: [50, 50] });
+        }, 300);
+        return;
+    }
+    if (mapInstanceVar === 'historyMapYesterday' && historyMapYesterday) {
+        setTimeout(() => {
+            historyMapYesterday.invalidateSize();
+            const latLngs = points.map(p => [p.lat, p.lng]);
+            // ZOOM AUTOMÁTICO
+            historyMapYesterday.fitBounds(L.polyline(latLngs).getBounds(), { padding: [50, 50] });
+        }, 300);
+        return;
+    }
 
     try {
-        const map = L.map(mapId).setView([points[0].lat, points[0].lng], 13);
+        // 3. Crear el mapa limpio
+        const map = L.map(mapId); 
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: '&copy; OpenStreetMap'
         }).addTo(map);
 
+        // 4. Dibujar la línea de la ruta
         const latLngs = points.map(p => [p.lat, p.lng]);
-        L.polyline(latLngs, { color: 'blue' }).addTo(map);
+        const routeLine = L.polyline(latLngs, { color: '#2563eb', weight: 4 }).addTo(map);
 
-        points.forEach(p => {
-            L.marker([p.lat, p.lng]).addTo(map)
-                .bindPopup(`<b>${p.name}</b><br>Duración: ${p.duration}`);
+        // 5. Agregar marcadores (Inicio, Fin y Eventos importantes)
+        points.forEach((p, index) => {
+            // Solo ponemos marcador al inicio, final, o si es una alerta/bloqueo
+            if (index === 0 || index === points.length - 1 || p.name.includes("⚠️") || p.name.includes("Bloqueo")) {
+                L.marker([p.lat, p.lng]).addTo(map)
+                    .bindPopup(`<b>${p.name}</b><br>Duración: ${p.duration}`);
+            }
         });
 
-        map.fitBounds(L.polyline(latLngs).getBounds());
-
+        // 6. Guardar la referencia en la variable global correcta
         if (mapInstanceVar === 'historyMapToday') {
             historyMapToday = map;
         } else if (mapInstanceVar === 'historyMapYesterday') {
             historyMapYesterday = map;
         }
 
+        // --- LA SOLUCIÓN AL PROBLEMA DE ZOOM ---
+        // Esperamos 300ms para asegurar que el div es visible y tiene tamaño
+        setTimeout(() => {
+            map.invalidateSize(); // "Despierta" al mapa para que vea su tamaño real
+            map.fitBounds(routeLine.getBounds(), { 
+                padding: [50, 50], // Deja un margen de 50px alrededor
+                maxZoom: 16,       // No te acerques demasiado si los puntos están pegados
+                animate: true 
+            });
+        }, 300);
+
     } catch (e) {
         console.error(`Error inicializando el mapa ${mapId}:`, e);
-        const mapEl = document.getElementById(mapId);
-        if (mapEl) mapEl.innerHTML = `<div class="p-3 text-danger">Error al cargar el mapa.</div>`;
     }
 }
 
@@ -1065,7 +1154,7 @@ async function handleSaveGeofence() {
 function updateModalMarkerFromInputs() {
     const lat = Number(document.getElementById("geofence-lat-input").value);
     const lng = Number(document.getElementById("geofence-lng-input").value);
-
+    
     // Verificar que sean números válidos
     if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
         const newLatLng = [lat, lng];
@@ -1167,7 +1256,7 @@ function sleep(ms) {
  */
 async function runDemoRoute() {
     const demoBtn = document.getElementById('run-demo-btn');
-
+    
     // 1. Validar
     if (!currentVehicleId) {
         showAlert("Por favor, selecciona un vehículo primero.", "error");
@@ -1180,20 +1269,20 @@ async function runDemoRoute() {
     // 2. Ruta GeoJSON (Tu ruta proporcionada)
     // Formato GeoJSON original: [Longitud, Latitud]
     const geoJsonPath = [
-        [-99.22082, 20.20428], [-99.22073, 20.20485], [-99.2206, 20.20528], [-99.22051, 20.20567],
-        [-99.22051, 20.20567], [-99.2204, 20.20572], [-99.22023, 20.20579], [-99.22018, 20.20581],
-        [-99.22011, 20.20581], [-99.22002, 20.2058], [-99.22002, 20.2058], [-99.21988, 20.20577],
-        [-99.21969, 20.20653], [-99.2194, 20.20795], [-99.21914, 20.20942], [-99.21914, 20.20942],
-        [-99.21792, 20.21632], [-99.21767, 20.21779], [-99.21755, 20.2184], [-99.21716, 20.22032],
-        [-99.2171, 20.2206], [-99.21703, 20.22096], [-99.21698, 20.2212], [-99.21695, 20.22134],
-        [-99.21687, 20.22232], [-99.21675, 20.22303], [-99.21673, 20.22316], [-99.21661, 20.22382],
-        [-99.21624, 20.22562], [-99.21602, 20.22683], [-99.21582, 20.22775], [-99.21558, 20.22877],
-        [-99.21558, 20.22877], [-99.21492, 20.22893], [-99.21469, 20.22902], [-99.21469, 20.22902],
-        [-99.21466, 20.22927], [-99.21407, 20.22919], [-99.21407, 20.22919], [-99.21403, 20.22946],
-        [-99.21403, 20.22946], [-99.21348, 20.22941], [-99.21342, 20.22941], [-99.21242, 20.22929],
-        [-99.21131, 20.22914], [-99.21033, 20.22903], [-99.21033, 20.22903], [-99.21012, 20.2302],
-        [-99.21009, 20.23038], [-99.20998, 20.23099], [-99.20991, 20.23142], [-99.20979, 20.23212],
-        [-99.2097, 20.23264], [-99.20962, 20.23308], [-99.20957, 20.23337], [-99.20957, 20.23337]
+        [-99.22082,20.20428],[-99.22073,20.20485],[-99.2206,20.20528],[-99.22051,20.20567],
+        [-99.22051,20.20567],[-99.2204,20.20572],[-99.22023,20.20579],[-99.22018,20.20581],
+        [-99.22011,20.20581],[-99.22002,20.2058],[-99.22002,20.2058],[-99.21988,20.20577],
+        [-99.21969,20.20653],[-99.2194,20.20795],[-99.21914,20.20942],[-99.21914,20.20942],
+        [-99.21792,20.21632],[-99.21767,20.21779],[-99.21755,20.2184],[-99.21716,20.22032],
+        [-99.2171,20.2206],[-99.21703,20.22096],[-99.21698,20.2212],[-99.21695,20.22134],
+        [-99.21687,20.22232],[-99.21675,20.22303],[-99.21673,20.22316],[-99.21661,20.22382],
+        [-99.21624,20.22562],[-99.21602,20.22683],[-99.21582,20.22775],[-99.21558,20.22877],
+        [-99.21558,20.22877],[-99.21492,20.22893],[-99.21469,20.22902],[-99.21469,20.22902],
+        [-99.21466,20.22927],[-99.21407,20.22919],[-99.21407,20.22919],[-99.21403,20.22946],
+        [-99.21403,20.22946],[-99.21348,20.22941],[-99.21342,20.22941],[-99.21242,20.22929],
+        [-99.21131,20.22914],[-99.21033,20.22903],[-99.21033,20.22903],[-99.21012,20.2302],
+        [-99.21009,20.23038],[-99.20998,20.23099],[-99.20991,20.23142],[-99.20979,20.23212],
+        [-99.2097,20.23264],[-99.20962,20.23308],[-99.20957,20.23337],[-99.20957,20.23337]
     ];
 
     let historyRoutePoints = [];
@@ -1204,35 +1293,35 @@ async function runDemoRoute() {
         // Recorrer cada punto de la ruta
         for (let i = 0; i < geoJsonPath.length; i++) {
             const point = geoJsonPath[i];
-
+            
             // IMPORTANTE: GeoJSON es [Lon, Lat], pero Firebase/Leaflet usan [Lat, Lon]
-            const lat = point[1];
+            const lat = point[1]; 
             const lon = point[0];
 
             // --- Generar datos simulados ---
             // Velocidad variable (más rápido en rectas)
-            const speed = Math.floor(Math.random() * 40) + 20;
+            const speed = Math.floor(Math.random() * 40) + 20; 
             // Batería bajando
-            const battery = Math.max(10, 100 - Math.floor((i / geoJsonPath.length) * 15));
-
+            const battery = Math.max(10, 100 - Math.floor((i / geoJsonPath.length) * 15)); 
+            
             // Timestamp simulado (para que se vea bien en la gráfica)
             const now = new Date();
             // Restamos tiempo para que la ruta parezca haber ocurrido en la última hora
-            now.setMinutes(now.getMinutes() - (geoJsonPath.length - i));
+            now.setMinutes(now.getMinutes() - (geoJsonPath.length - i)); 
             const timestamp = now.toISOString();
 
             // --- EVENTOS ALEATORIOS ---
-
+            
             // 1. Simular Inclinación (Caída)
             // Probabilidad del 5% en cada paso de tener una caída
             let tilt = Math.floor(Math.random() * 6) - 3; // Normal: -3 a 3
-            let isFall = Math.random() < 0.05;
-
+            let isFall = Math.random() < 0.05; 
+            
             if (isFall) {
                 tilt = Math.floor(Math.random() * 20) + 50; // Entre 50 y 70 grados
                 console.log("🔥 ¡Evento aleatorio: CAÍDA!");
                 showAlert(`¡Alerta! Caída detectada (${tilt}°)`, "error");
-
+                
                 // Guardar evento en Firebase
                 const eventRef = doc(collection(db, "dispositivos", currentVehicleId, "events"));
                 await setDoc(eventRef, {
@@ -1246,7 +1335,7 @@ async function runDemoRoute() {
             // 2. Simular Bloqueo/Desbloqueo
             // Probabilidad del 5% de cambiar el estado
             let isLockEvent = Math.random() < 0.05;
-
+            
             if (isLockEvent) {
                 currentLockState = !currentLockState; // Invertir estado
                 const msg = currentLockState ? "Motor BLOQUEADO remotamente" : "Motor DESBLOQUEADO";
@@ -1270,7 +1359,7 @@ async function runDemoRoute() {
             updateBattery(battery);
             updateModelTilt(tilt);
             updateSliderUI(tilt);
-
+            
             // Actualizar icono de bloqueo en la UI
             const lockIcon = document.querySelector('#lockStatus i');
             if (currentLockState) {
@@ -1302,7 +1391,7 @@ async function runDemoRoute() {
 
                 historyRoutePoints.push({
                     name: pointName,
-                    duration: "1 min",
+                    duration: "1 min", 
                     lat: lat,
                     lng: lon
                 });
@@ -1350,7 +1439,7 @@ async function loadAnalysisData(vehicleId) {
             orderBy("timestamp", "desc"),
             limit(100)
         );
-
+        
         // 2. Eventos (Últimos 50 para seguridad)
         const eventsQuery = query(
             collection(db, "dispositivos", vehicleId, "events"),
@@ -1388,7 +1477,7 @@ async function loadAnalysisData(vehicleId) {
  * (MODIFICADO) Renderiza los 4 KPIs y las gráficas.
  */
 function renderAnalysisUI(container, pings, events, historyDays) {
-
+    
     // 1. Calcular los valores
     const kpiSafety = calculateSafetyKPI(events);
     const kpiGeo = calculateGeofenceKPI(pings);
@@ -1474,21 +1563,21 @@ function renderAnalysisUI(container, pings, events, historyDays) {
                     <ul class="list-group list-group-flush" style="max-height: 280px; overflow-y: auto;">
                         ${events.length === 0 ? '<li class="list-group-item text-muted text-center py-4">Sin eventos recientes.</li>' : ''}
                         ${events.map(e => {
-        const date = new Date(e.timestamp);
-        const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const dateStr = date.toLocaleDateString();
+                            const date = new Date(e.timestamp);
+                            const timeStr = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            const dateStr = date.toLocaleDateString();
+                            
+                            let icon = 'bi-info-circle text-secondary';
+                            let bgClass = '';
+                            
+                            if (e.tipo === 'inclinacion') {
+                                icon = 'bi-exclamation-triangle-fill text-danger';
+                                bgClass = 'bg-danger bg-opacity-10';
+                            } else if (e.tipo === 'bloqueo') {
+                                icon = e.activado ? 'bi-lock-fill text-danger' : 'bi-unlock-fill text-success';
+                            }
 
-        let icon = 'bi-info-circle text-secondary';
-        let bgClass = '';
-
-        if (e.tipo === 'inclinacion') {
-            icon = 'bi-exclamation-triangle-fill text-danger';
-            bgClass = 'bg-danger bg-opacity-10';
-        } else if (e.tipo === 'bloqueo') {
-            icon = e.activado ? 'bi-lock-fill text-danger' : 'bi-unlock-fill text-success';
-        }
-
-        return `
+                            return `
                                 <li class="list-group-item d-flex align-items-start ${bgClass}">
                                     <div class="me-3 mt-1"><i class="bi ${icon} fs-5"></i></div>
                                     <div>
@@ -1497,7 +1586,7 @@ function renderAnalysisUI(container, pings, events, historyDays) {
                                     </div>
                                 </li>
                             `;
-    }).join('')}
+                        }).join('')}
                     </ul>
                 </div>
             </div>
@@ -1560,7 +1649,7 @@ document.addEventListener('click', function unlockAudio() {
     notificationSound.play().then(() => {
         notificationSound.pause();
         notificationSound.currentTime = 0;
-    }).catch(() => { });
+    }).catch(() => {});
 
     // Remover este listener para que no se ejecute en cada clic
     document.removeEventListener('click', unlockAudio);
@@ -1585,7 +1674,7 @@ function calculateGeofenceKPI(pings) {
     }
 
     let pointsInside = 0;
-
+    
     pings.forEach(ping => {
         // Verificar si este punto está dentro de ALGUNA de las geocercas activas
         let isInsideAny = false;
@@ -1595,7 +1684,7 @@ function calculateGeofenceKPI(pings) {
                 const dist = getDistance(ping.ubicacion.latitude, ping.ubicacion.longitude, fence.lat, fence.lon);
                 if (dist <= fence.radius) {
                     isInsideAny = true;
-                    break;
+                    break; 
                 }
             }
         }
@@ -1603,7 +1692,7 @@ function calculateGeofenceKPI(pings) {
     });
 
     const percentage = Math.round((pointsInside / pings.length) * 100);
-
+    
     // Semáforo: >80% Verde, 50-80% Amarillo, <50% Rojo
     let status = 'danger';
     if (percentage >= 80) status = 'success';
@@ -1615,11 +1704,11 @@ function calculateGeofenceKPI(pings) {
 /** KPI 3: Eficiencia (Distancia Total 7 días) */
 function calculateEfficiencyKPI(historyDays) {
     let totalKm = 0;
-
+    
     historyDays.forEach(day => {
         if (day.summary && day.summary.distance) {
             // El string suele ser "12.5 km". Extraemos el número.
-            const distString = day.summary.distance;
+            const distString = day.summary.distance; 
             const distNumber = parseFloat(distString.split(' ')[0]);
             if (!isNaN(distNumber)) totalKm += distNumber;
         }
@@ -1627,14 +1716,14 @@ function calculateEfficiencyKPI(historyDays) {
 
     // Redondear a 1 decimal
     totalKm = Math.round(totalKm * 10) / 10;
-
+    
     return { value: `${totalKm} km`, status: 'primary', text: 'Últimos 7 días' };
 }
 
 /** KPI 4: Salud de Batería (Nivel Mínimo Reciente) */
 function calculateBatteryHealthKPI(pings) {
     if (pings.length === 0) return { value: '--', status: 'secondary' };
-
+    
     // Encontrar el valor mínimo de batería en los pings recientes
     let minBat = 100;
     pings.forEach(p => {
@@ -1648,4 +1737,221 @@ function calculateBatteryHealthKPI(pings) {
     return { value: `${minBat}%`, status: status, text: 'Nivel Mínimo' };
 }
 
+
+async function toggleMotorLock() {
+    // 1. Validaciones
+    if (!currentVehicleId) return showAlert("Selecciona un vehículo primero.", "error");
+    if (isTogglingLock) return; // Evitar clicks múltiples mientras procesa
+
+    isTogglingLock = true;
+    const card = document.getElementById("card-lock-toggle");
+    
+    // Feedback visual inmediato (opacidad) para que el usuario sepa que está cargando
+    if(card) card.style.opacity = "0.5";
+
+    try {
+        // 2. Invertir el estado actual
+        const newState = !isVehicleLocked; 
+
+        // 3. Enviar a Firebase
+        const docRef = doc(db, "dispositivos", currentVehicleId);
+        await updateDoc(docRef, {
+            bloqueo: newState
+        });
+
+        // NOTA: No necesitamos actualizar la UI manual aquí, 
+        // porque tu listener onSnapshot detectará el cambio y actualizará el icono solo.
+        
+        console.log(`[Comando] Motor cambiado a: ${newState ? "BLOQUEADO" : "DESBLOQUEADO"}`);
+        showAlert(newState ? "Motor Bloqueado" : "Motor Desbloqueado", newState ? "error" : "success");
+
+    } catch (error) {
+        console.error("Error al cambiar bloqueo:", error);
+        showAlert("Error al actualizar estado.", "error");
+    } finally {
+        isTogglingLock = false;
+        if(card) card.style.opacity = "1";
+    }
+}
+function checkTheftMovement(lat, lon, isLocked) {
+    if (!isLocked) {
+        lastLockedLocation = null;
+        return;
+    }
+    if (lastLockedLocation === null) {
+        lastLockedLocation = { lat: lat, lon: lon };
+        return;
+    }
+
+    const dist = getDistance(lat, lon, lastLockedLocation.lat, lastLockedLocation.lon);
+
+    // Si se mueve más de 5 metros
+    if (dist > 5) { 
+        const msg = `Movimiento NO autorizado. Desplazamiento: ${Math.round(dist)}m`;
+        
+        // 1. Alerta en la Web
+        showAlert(msg, "error"); 
+        
+        // 2. ENVIAR WHATSAPP (Con límite de 1 mensaje por minuto)
+        const now = Date.now();
+        if (!window.lastWaSent || (now - window.lastWaSent > 60000)) { 
+            sendWhatsAppAlert(msg); // <--- AQUÍ SE LLAMA
+            window.lastWaSent = now;
+        }
+        
+        // Actualizamos la ubicación para seguir rastreando
+        lastLockedLocation = { lat: lat, lon: lon }; 
+    }
+}
+
+
+async function sendWhatsAppAlert(text) {
+    // 1. CHEQUEO DEL INTERRUPTOR
+    if (!whatsappAlertsEnabled) {
+        console.log("🔕 [WhatsApp] Alerta silenciada por el usuario.");
+        return; 
+    }
+
+    // 2. Validación (CORREGIDA)
+    // Solo detenemos si las variables están vacías o indefinidas.
+    // Ya NO comparamos con tus números reales.
+    if (!waPhone || !waApiKey) {
+        console.warn("⚠️ [WhatsApp] Faltan configurar credenciales.");
+        return;
+    }
+
+    // 3. Preparación
+    const encodedText = encodeURIComponent(`🚨 RiderSafe: ${text}`);
+    const url = `https://api.callmebot.com/whatsapp.php?phone=${waPhone}&text=${encodedText}&apikey=${waApiKey}`;
+
+    try {
+        console.log(`📤 [WhatsApp] Enviando: "${text}"...`);
+        await fetch(url, { mode: 'no-cors' });
+        console.log("✅ [WhatsApp] Petición enviada.");
+    } catch (error) {
+        console.error("❌ [WhatsApp] Error de red:", error);
+    }
+}
+
+// --- PASO 2: Modificado para aceptar 'geofences' como parámetro ---
+function updateUIFromData(data, geofences) {
+    // 1. Actualizar Sensores Básicos
+    updateBattery(data.bateria || 0);
+    updateSpeed(data.velocidad || 0);
+    
+    // 2. Actualizar Inclinación
+    const currentTilt = data.inclinacion || 0; 
+    updateModelTilt(currentTilt);
+    updateSliderUI(currentTilt);
+    checkTiltStatus(currentTilt); // Alertas de caída/inclinación
+
+    // 3. Actualizar Estado de Bloqueo
+    isVehicleLocked = data.bloqueo || false;
+
+    // Actualizar Icono de Bloqueo Visualmente
+    const lockDiv = document.getElementById("lockStatus");
+    if (lockDiv) {
+        if (isVehicleLocked) {
+            lockDiv.innerHTML = '<i class="bi bi-lock-fill text-danger" style="font-size: 2rem;"></i>';
+        } else {
+            lockDiv.innerHTML = '<i class="bi bi-unlock-fill text-success" style="font-size: 2rem;"></i>';
+        }
+    }
+
+    // 4. Actualizar Nombre del Vehículo
+    const displayName = data.friendlyName || currentVehicleId;
+    const nameDisplay = document.getElementById('vehicle-name-display');
+    if (nameDisplay) nameDisplay.textContent = displayName;
+    
+    const nameInput = document.getElementById('vehicle-name-input');
+    if (nameInput) nameInput.value = displayName;
+
+    // 5. LÓGICA DE UBICACIÓN (Unificada)
+    // Antes tenías este bloque repetido dos veces. Ahora está consolidado.
+    if (data.ubicacion && data.ubicacion.latitude && data.ubicacion.longitude) {
+        const lat = data.ubicacion.latitude;
+        const lon = data.ubicacion.longitude;
+
+        // A. Mover marcador en mapa
+        updateMapLocation(lat, lon);
+        
+        // B. Verificar si entra/sale de geocercas
+        checkGeofences(lat, lon, geofences);
+
+        // C. Verificar robo (si está bloqueado)
+        checkTheftMovement(lat, lon, isVehicleLocked);
+
+    } else {
+        // Si no hay ubicación, solo validamos estado de geocercas (fuera/desconocido)
+        checkGeofences(null, null, geofences);
+    }
+
+    // 6. Gestión de Geocercas (Redibujar solo si cambian)
+    const oldGeoSignature = currentVehicleGeofences
+        .map(g => `${g.id}${g.name}${g.radius}${g.lat}${g.lon}${g.active}`)
+        .join();
+    const newGeoSignature = geofences
+        .map(g => `${g.id}${g.name}${g.radius}${g.lat}${g.lon}${g.active}`)
+        .join();
+
+    if (oldGeoSignature !== newGeoSignature) {
+        console.log("[Geofence] Detectado cambio en la configuración de geocercas, redibujando.");
+        updateGeofenceListUI(geofences);
+        drawGeofencesOnMap(geofences);
+        loadGeofencesInModal(geofences);
+    }
+
+    currentVehicleGeofences = geofences;
+}
+/**
+ * Monitorea la inclinación en tiempo real y emite alertas por zonas.
+ * Zonas:
+ * - Safe: 0 a 37
+ * - Warning (Amarilla): 38 a 45
+ * - Danger (Roja): 46 a 70
+ * - Fall (Caída): > 70
+ */
+function checkTiltStatus(angle) {
+    const absAngle = Math.abs(angle); 
+    let currentZone = "safe";
+    let msg = ""; // Inicializada vacía
+
+    // Determinamos la zona actual
+    if (absAngle > 70) {
+        currentZone = "fall";
+    } else if (absAngle > 45) {
+        currentZone = "danger";
+    } else if (absAngle >= 38) {
+        currentZone = "warning";
+    }
+
+    // Solo actuamos si la zona HA CAMBIADO
+    if (currentZone !== lastTiltZone) {
+        
+        // 1. Zona AMARILLA (38-45)
+        if (currentZone === "warning") {
+            // Guardamos el mensaje en la variable
+            msg = `⚠️ Precaución: Inclinación alta (${angle}°)`;
+            showAlert(msg, "warning");
+        } 
+        // 2. Zona ROJA (>45)
+        else if (currentZone === "danger") {
+            // Guardamos el mensaje en la variable
+            msg = `🛑 PELIGRO: Inclinación crítica (${angle}°)`;
+            showAlert(msg, "error");
+        }
+        // 3. Zona CAÍDA (>70)
+        else if (currentZone === "fall") {
+            // Guardamos el mensaje en la variable
+            msg = `🆘 CAÍDA DETECTADA (${angle}°)`;
+            
+            // Ahora usamos la variable para ambas funciones
+            showAlert(msg, "error");
+            sendWhatsAppAlert(msg); // <--- AHORA SÍ LLEVA TEXTO
+        }
+
+        // Actualizamos el estado
+        lastTiltZone = currentZone;
+    }
+}
 export { initDashboard };

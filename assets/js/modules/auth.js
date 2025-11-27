@@ -9,7 +9,7 @@ import {
     sendEmailVerification,     // <-- AÑADIDO
     sendPasswordResetEmail,    // <-- AÑADIDO
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { doc, setDoc, getDoc, runTransaction } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 let currentUser = null;
 
@@ -31,19 +31,34 @@ export function initAuth() {
 }
 
 /**
- * Actualiza la UI global (botones, enlaces) según el estado de autenticación.
+ * Actualiza la UI global (botones, enlaces, PAYPAL) según el estado de autenticación.
  * @param {object|null} user - El objeto de usuario de Firebase o null.
  */
 function updateAuthUI(user) {
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const dashboardLink = document.getElementById("dashboardLink");
+    
+    // --- NUEVO: Elementos de PayPal ---
+    const paypalForm = document.getElementById('paypal-form');
+    const loginWarning = document.getElementById('login-warning');
 
-    const isLoggedIn = !!user; // Convierte user a un booleano
+    const isLoggedIn = !!user; // Convierte user a un booleano (true si logueado, false si no)
 
+    // Lógica existente de menú
     if (loginBtn) loginBtn.style.display = isLoggedIn ? "none" : "block";
     if (logoutBtn) logoutBtn.style.display = isLoggedIn ? "block" : "none";
     if (dashboardLink) dashboardLink.style.display = isLoggedIn ? "block" : "none";
+
+    // --- NUEVO: Lógica del botón de PayPal ---
+    // Verificamos si existe el formulario en esta página para evitar errores en otras páginas
+    if (paypalForm) {
+        paypalForm.style.display = isLoggedIn ? "block" : "none";
+    }
+
+    if (loginWarning) {
+        loginWarning.style.display = isLoggedIn ? "none" : "block";
+    }
 }
 
 /**
@@ -176,62 +191,7 @@ export async function getUserData(uid) {
     }
 }
 
-/**
- * Activa un código de producto, creando la licencia y el dispositivo asociado.
- * @param {string} code - El código de activación.
- * @returns {Promise<{success: boolean, error?: string, plan?: string}>}
- */
-export async function activateProductCode(code) {
-    const user = getCurrentUser();
-    if (!user) {
-        return { success: false, error: "Debes iniciar sesión para activar un código." };
-    }
 
-    try {
-        const userData = await getUserData(user.uid);
-        if (userData.activationCodes?.includes(code)) {
-            return { success: false, error: "Este código ya ha sido utilizado." };
-        }
-
-        const plan = code.toUpperCase().includes("PLUS") ? "plus" : "basic";
-        const vehicleId = `vehicle_${user.uid}_${Date.now()}`;
-        const licenseId = `license_${user.uid}_${Date.now()}`;
-
-        // Crear la licencia
-        await setDoc(doc(db, "licencias", licenseId), {
-            plan,
-            vehicleId,
-            userId: user.uid,
-            activationCode: code,
-            activatedAt: new Date().toISOString(),
-            active: true,
-        });
-
-        // Crear el dispositivo con datos iniciales
-        await setDoc(doc(db, "dispositivos", vehicleId), {
-            userId: user.uid,
-            licenseId,
-            bateria: 85,
-            inclinacion: 0,
-            velocidad: 0,
-            ubicacion: { latitude: 20.138, longitude: -99.2015 },
-            timestamp: new Date().toISOString(),
-        });
-
-        // Actualizar el perfil del usuario
-        await setDoc(doc(db, "usuarios", user.uid), {
-            ...userData,
-            vehicles: [...(userData.vehicles || []), vehicleId],
-            activationCodes: [...(userData.activationCodes || []), code],
-            purchasedProducts: [...(userData.purchasedProducts || []), `ridersafe-${plan}`],
-        });
-
-        return { success: true, plan };
-    } catch (error) {
-        console.error("[Auth] Error activando código:", error);
-        return { success: false, error: "Ocurrió un error al activar el código." };
-    }
-}
 
 /**
  * Devuelve una promesa que se resuelve con el estado de autenticación inicial.
@@ -287,5 +247,139 @@ function getAuthErrorMessage(error) {
             return "Demasiados intentos fallidos. Inténtalo de nuevo más tarde.";
         default:
             return "Ocurrió un error inesperado. Por favor, intenta de nuevo.";
+    }
+}
+// --- FUNCIONES PARA LICENCIAS (Agrega esto al final de auth.js) ---
+
+/**
+ * Genera un código de licencia alfanumérico largo.
+ * @param {number} length 
+ * @returns {string}
+ */
+function generateLicenseCode(length = 16) {
+    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let code = '';
+    for (let i = 0; i < length; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code.match(/.{1,4}/g).join('-');
+}
+
+/**
+ * Registra una nueva licencia en Firestore.
+ * IMPRESCINDIBLE: Debe tener la palabra 'export' para usarse en otros archivos.
+ */
+export async function registerNewLicense(purchaseId, userId, plan) {
+    let success = false;
+    let attempts = 0;
+    let newCode = '';
+    const MAX_ATTEMPTS = 5;
+
+    while (!success && attempts < MAX_ATTEMPTS) {
+        attempts++;
+        newCode = generateLicenseCode(16);
+        const licenseRef = doc(db, "licencias", newCode);
+
+        try {
+            await runTransaction(db, async (transaction) => {
+                const docSnap = await transaction.get(licenseRef);
+                if (docSnap.exists()) {
+                    throw new Error("Code collision");
+                }
+                transaction.set(licenseRef, {
+                    purchaseId: purchaseId,
+                    userId: userId,
+                    plan: plan,
+                    active: false,
+                    activationCode: newCode,
+                    generatedOn: new Date().toISOString(),
+                });
+            });
+            success = true;
+            console.log(`Licencia ${newCode} generada.`);
+        } catch (error) {
+            if (error.message !== "Code collision") {
+                console.error("Error crítico:", error);
+                return { success: false, error: error.message };
+            }
+        }
+    }
+    
+    return success ? { success: true, code: newCode } : { success: false, error: "Error al generar código único." };
+}
+
+/**
+ * Activa un código de producto de forma segura (ATÓMICA).
+ * Requiere que el documento de licencia con ID = `code` ya exista y tenga active: false.
+ * @param {string} code - El código de activación (ID del documento).
+ * @returns {Promise<{success: boolean, error?: string, plan?: string}>}
+ */
+export async function activateProductCode(code) {
+    const user = getCurrentUser(); // Asegúrate de que esta función existe en este archivo
+    if (!user) {
+        return { success: false, error: "Debes iniciar sesión para activar un código." };
+    }
+
+    const licenseRef = doc(db, "licencias", code);
+    const userRef = doc(db, "usuarios", user.uid);
+
+    try {
+        let planUsed = null;
+        const newVehicleId = `vehicle_${user.uid}_${Date.now()}`;
+
+        await runTransaction(db, async (transaction) => {
+            const licenseDoc = await transaction.get(licenseRef);
+            const userDoc = await transaction.get(userRef);
+
+            // Validaciones
+            if (!licenseDoc.exists()) {
+                throw new Error("Código de activación inválido o no encontrado.");
+            }
+
+            const licenseData = licenseDoc.data();
+            
+            if (licenseData.active === true) {
+                throw new Error("Este código ya ha sido activado y consumido.");
+            }
+
+            if (licenseData.userId && licenseData.userId !== user.uid) {
+                throw new Error("El código está asignado a otro usuario.");
+            }
+
+            // Preparar datos
+            planUsed = licenseData.plan || (code.toUpperCase().includes("PLUS") ? "plus" : "basic");
+            const userData = userDoc.data() || {};
+
+            // Escrituras Atómicas
+            transaction.update(licenseRef, {
+                active: true,
+                activatedAt: new Date().toISOString(),
+                vehicleId: newVehicleId,
+                userId: user.uid,
+                plan: planUsed,
+            });
+
+            transaction.set(doc(db, "dispositivos", newVehicleId), {
+                userId: user.uid,
+                licenseId: code,
+                bateria: 85,
+                inclinacion: 0,
+                velocidad: 0,
+                ubicacion: { latitude: 20.138, longitude: -99.2015 },
+                timestamp: new Date().toISOString(),
+            });
+
+            transaction.update(userRef, {
+                vehicles: [...(userData.vehicles || []), newVehicleId],
+                activationCodes: [...(userData.activationCodes || []), code],
+                purchasedProducts: [...(userData.purchasedProducts || []), `ridersafe-${planUsed}`],
+            });
+        });
+
+        return { success: true, plan: planUsed };
+
+    } catch (error) {
+        console.error("[Auth] Error en activación:", error.message);
+        return { success: false, error: error.message || "Error al activar." };
     }
 }

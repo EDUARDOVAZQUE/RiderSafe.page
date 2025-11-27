@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../assets/css/global.css">
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="../assets/js/modules/product.js"></script>
     <style>
         /* --- Product Image Gallery --- */
 
@@ -50,8 +51,8 @@
             <div class="container">
                 <nav aria-label="breadcrumb" class="mb-4">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/index.html">Inicio</a></li>
-                        <li class="breadcrumb-item"><a href="/index.html#products">Productos</a></li>
+                        <li class="breadcrumb-item"><a href="../index.html">Inicio</a></li>
+                        <li class="breadcrumb-item"><a href="../index.html#products">Productos</a></li>
                         <li class="breadcrumb-item active" aria-current="page">RiderSafe Básico</li>
                     </ol>
                 </nav>
@@ -66,12 +67,12 @@
                             <div class="thumbnail-images d-flex gap-2">
                                 <img src="../assets/img/1.jpg" alt="Vista frontal"
                                     class="img-thumbnail product-thumbnail" onclick="changeMainImage(this.src)">
-                                <img src="../assets/img/2.jpg" alt="Vista trasera"
+                                <img src="../assets/img/4.jpg" alt="Vista trasera"
                                     class="img-thumbnail product-thumbnail" onclick="changeMainImage(this.src)">
-                                <img src="../assets/img/3.jpg" alt="Vista lateral"
+                                <img src="../assets/img/frente.jpg" alt="Vista lateral"
                                     class="img-thumbnail product-thumbnail" onclick="changeMainImage(this.src)">
-                                <img src="../assets/img/4.jpg" alt="Instalación" class="img-thumbnail product-thumbnail"
-                                    onclick="changeMainImage(this.src)">
+                                <img src="../assets/img/vender.jpg" alt="Instalación"
+                                    class="img-thumbnail product-thumbnail" onclick="changeMainImage(this.src)">
                             </div>
                         </div>
                     </div>
@@ -118,14 +119,13 @@
                                 </ul>
                             </div>
 
-                            <!-- BOTONES MODIFICADOS -->
                             <div class="d-grid gap-2 mb-4">
-                                <a href="../pages/en-progreso.html" class="btn btn-success btn-lg">
+                                <a href="#" class="btn btn-success btn-lg" id="directBuyButton" data-plan="basic">
                                     <i class="bi bi-person-lines-fill me-2"></i>Compra Directa con el Vendedor
                                 </a>
 
-                                <form class="btn btn-outline-dark btn-lg" action="https://www.paypal.com/cgi-bin/webscr"
-                                    method="post" target="_top">
+                                <form id="paypal-form" style="display: none;" class="btn btn-outline-dark btn-lg"
+                                    action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
                                     <input type="hidden" name="cmd" value="_s-xclick" />
                                     <input type="hidden" name="hosted_button_id" value="XCWEJXVNNGT6G" />
                                     <input type="hidden" name="currency_code" value="MXN" />
@@ -136,24 +136,27 @@
                                         alt="Comprar ahora" />
                                 </form>
 
+                                <p id="login-warning" style="display: none;">Debes iniciar sesión para comprar.</p>
+
                                 <button class="btn btn-outline-primary" onclick="openContactModal('RiderSafe Básico')">
                                     <i class="bi bi-chat-dots me-2"></i>Hacer una Consulta
                                 </button>
                             </div>
+                        </div>
 
-                            <div class="row g-3 text-center text-md-start">
-                                <div class="col-md-4"><i class="bi bi-truck me-2 text-success"></i><small>Envío gratis
-                                        (3-5 días)</small></div>
-                                <div class="col-md-4"><i
-                                        class="bi bi-shield-check me-2 text-success"></i><small>Garantía de 2
-                                        años</small></div>
-                                <div class="col-md-4"><i
-                                        class="bi bi-arrow-return-left me-2 text-success"></i><small>Devoluciones (30
-                                        días)</small></div>
-                            </div>
+                        <div class="row g-3 text-center text-md-start">
+                            <div class="col-md-4"><i class="bi bi-truck me-2 text-success"></i><small>Envío gratis
+                                    (3-5 días)</small></div>
+                            <div class="col-md-4"><i class="bi bi-shield-check me-2 text-success"></i><small>Garantía de
+                                    2
+                                    años</small></div>
+                            <div class="col-md-4"><i
+                                    class="bi bi-arrow-return-left me-2 text-success"></i><small>Devoluciones (30
+                                    días)</small></div>
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </section>
 
@@ -195,7 +198,7 @@
                                         móvil gratuita</li>
                                 </ul>
                             </div>
-                            <div class="col-lg-4"><img src="../assets/img/5.jpg" alt="Componentes incluidos"
+                            <div class="col-lg-4"><img src="../assets/img/10.jpg" alt="Componentes incluidos"
                                     class="img-fluid rounded"></div>
                         </div>
                     </div>
@@ -320,7 +323,7 @@
                                 <div class="alert alert-info"><i class="bi bi-info-circle me-2"></i><strong>Instalación
                                         profesional disponible</strong> por $500 MXN adicionales.</div>
                             </div>
-                            <div class="col-lg-4"><img src="../assets/img/6.jpg" alt="Diagrama de instalación"
+                            <div class="col-lg-4"><img src="../assets/img/instalacion.jpg" alt="instalación"
                                     class="img-fluid rounded"></div>
                         </div>
                     </div>

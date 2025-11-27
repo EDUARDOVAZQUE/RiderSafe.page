@@ -74,6 +74,12 @@
                             <input type="checkbox" id="follow-checkbox" checked>
                             <label for="follow-checkbox" class="ms-1">Seguir Vehículo</label>
                         </div>
+                        <div class="follow-toggle">
+                            <input type="checkbox" id="whatsapp-toggle" checked>
+                            <label for="whatsapp-toggle" class="ms-1" style="cursor: pointer;">
+                                <i class="bi bi-whatsapp text-success"></i> Alertas WhatsApp
+                            </label>
+                        </div>
                         <button id="run-demo-btn" class="btn btn-sm btn-warning me-3">
                             <i class="bi bi-play-circle"></i> Iniciar Demo
                         </button>
@@ -177,7 +183,7 @@
                                             <div class="speed-display" id="speedDisplay">0</div>
                                             <div class="status-value">km/h</div>
                                         </div>
-                                        <div class="status-card">
+                                        <div class="status-card" id="card-lock-toggle" style="cursor: pointer;">
                                             <div class="status-title">Bloqueo Motor</div>
                                             <div class="status-value" id="lockStatus">
                                                 <i class="bi bi-unlock-fill text-success" style="font-size: 2rem;"></i>
